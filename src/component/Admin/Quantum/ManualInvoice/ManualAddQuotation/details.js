@@ -10,6 +10,7 @@ import {
   TableWrapper,
   InputSearch,
   NormalSelect,
+  NormalTextarea,
 } from "component/common";
 import { dateFormat } from "service/helperFunctions";
 import { withTranslation } from "react-i18next";
@@ -48,7 +49,7 @@ export class DetailsClass extends React.Component {
       q_discount: "",
       q_taxes: "",
       q_total: "",
-      q_discpercent:""
+      q_discpercent: ""
     },
 
     detailsList: [
@@ -78,7 +79,7 @@ export class DetailsClass extends React.Component {
     isLoading: true,
     // is_loading: false,
     isMounted: true,
-    visible:false,
+    visible: false,
     // salesCollectionHeader: [
     //   { label: "Sales Collection" },
     //   { label: "Before Tax" },
@@ -159,9 +160,9 @@ export class DetailsClass extends React.Component {
 
   componentDidUpdate(prevProps) {
     // Typical usage (don't forget to compare props):
-    if(this.props.custId !==prevProps.custId){
-    //this.getTransactionHistory()
-  }
+    if (this.props.custId !== prevProps.custId) {
+      //this.getTransactionHistory()
+    }
     if (this.props.siteGstList !== prevProps.siteGstList) {
       // this.fetchData(this.props.siteGstList);
       let { siteGstList } = this.state;
@@ -202,8 +203,9 @@ export class DetailsClass extends React.Component {
       });
   };
 
-  searchAllInvoice = () => {
+  searchAllInvoice = async () => {
     let { invoice } = this.state;
+    await this.setState({ allInvoicesData: [] });
     this.props
       .getCommonApi(
         `transactioninvoices/?custid=&search=${invoice}`
@@ -214,7 +216,7 @@ export class DetailsClass extends React.Component {
           this.setState({ allInvoicesData: res.data });
         }
       });
-    
+
   };
 
   getDetails = () => {
@@ -319,19 +321,19 @@ export class DetailsClass extends React.Component {
     let { storedItemList } = this.state;
     let formFields = Object.assign({}, this.state.formFields);
 
-    if(name==="q_discpercent"){
+    if (name === "q_discpercent") {
       formFields[name] = value;
-      formFields['q_discount']= '';
-    
-    }else if(name==="q_discount"){
+      formFields['q_discount'] = '';
+
+    } else if (name === "q_discount") {
       formFields[name] = value;
-      formFields['q_discpercent']='';
+      formFields['q_discpercent'] = '';
     }
-    else{
+    else {
       formFields[name] = value;
-    
+
     }
-    
+
 
     this.setState(
       {
@@ -347,7 +349,7 @@ export class DetailsClass extends React.Component {
   };
 
   handleChange = async ({ target: { value, name } }) => {
-    
+
     let { detailsList } = this.state;
     console.log("value", value);
     console.log("name", name);
@@ -369,7 +371,7 @@ export class DetailsClass extends React.Component {
     // this.setState({ current_item_quantity })
   };
 
-  handleSelect = (item_code, item_desc, item_price, item_quantity) => {
+  handleSelect = (item_code, item_desc, item_price, item_quantity, item_remarks) => {
     let { storedItemList, detailsList, formFields } = this.state;
     for (let item of storedItemList) {
       if (item.item_code == item_code) {
@@ -388,11 +390,11 @@ export class DetailsClass extends React.Component {
       storedItemList.push({
         item_code: item_code,
         item_desc: item_desc,
-        item_remarks: "",
+        item_remarks: item_remarks,
         item_price: item_price,
         item_quantity: item_quantity,
-        discount_percent:0,
-        discount_amt:0,
+        discount_percent: 0,
+        discount_amt: 0,
         editing: false,
       });
     } else {
@@ -400,11 +402,11 @@ export class DetailsClass extends React.Component {
       storedItemList.push({
         item_code: item_code,
         item_desc: item_desc,
-        item_remarks: "",
+        item_remarks: item_remarks,
         item_price: item_price,
         item_quantity: item_quantity,
-        discount_percent:0,
-        discount_amt:0,
+        discount_percent: 0,
+        discount_amt: 0,
         editing: false,
       });
     }
@@ -545,7 +547,7 @@ export class DetailsClass extends React.Component {
   };
 
 
-  handleEditChangediscountAmount=  ({ target: { value, name } }) => {
+  handleEditChangediscountAmount = ({ target: { value, name } }) => {
     let { storedItemList } = this.state;
 
     for (let list in storedItemList) {
@@ -562,14 +564,14 @@ export class DetailsClass extends React.Component {
     console.log("storedItemList in handleEditChange", storedItemList);
   };
 
-  
-  handleEditChangediscountPercent=  ({ target: { value, name } }) => {
+
+  handleEditChangediscountPercent = ({ target: { value, name } }) => {
     let { storedItemList } = this.state;
 
     for (let list in storedItemList) {
       if (storedItemList[list].item_code == name) {
         storedItemList[list].discount_percent = value;
-        storedItemList[list].discount_amt= Number((storedItemList[list].item_price*value)/100)
+        storedItemList[list].discount_amt = Number((storedItemList[list].item_price * value) / 100)
       }
       // console.log("storedItemList[list].item_code",storedItemList[list].item_code)
     }
@@ -607,7 +609,7 @@ export class DetailsClass extends React.Component {
       let total = 0;
       for (let item of storedItemList) {
         costPrice =
-          parseFloat(item.item_price-item.discount_amt) * parseFloat(item.item_quantity) +
+          parseFloat(item.item_price - item.discount_amt) * parseFloat(item.item_quantity) +
           costPrice;
         // console.log("item.item_price",item.item_price,typeof item.item_price)
         // console.log("item.item_quantity",item.item_quantity,typeof item.item_quantity)
@@ -621,10 +623,10 @@ export class DetailsClass extends React.Component {
         typeof formFields.q_shipcost
       );
       console.log("costPrice", costPrice);
-      let dis=Number(formFields.q_discpercent);
-      if(dis>0){
-        dis=((costPrice*Number(formFields.q_discpercent))/100);
-        formFields.q_discount=dis
+      let dis = Number(formFields.q_discpercent);
+      if (dis > 0) {
+        dis = ((costPrice * Number(formFields.q_discpercent)) / 100);
+        formFields.q_discount = dis
       }
       subTotal =
         costPrice -
@@ -650,12 +652,12 @@ export class DetailsClass extends React.Component {
     }
   };
 
-  getIndividualTransaction = (value,flag) => {
-    const url=flag?`transactionhistory/${value}/`:`manualinvoiceitemtable/?searchqitemid=${value}`;
+  getIndividualTransaction = (value, flag) => {
+    const url = flag ? `transactionhistory/${value}/` : `manualinvoiceitemtable/?searchqitemid=${value}`;
     this.props.getCommonApi(`${url}`).then((res) => {
       console.log("res in transaction history", res);
       if (res.status == 200) {
-        const obj=flag?res.data.daud_lines:res.data;          
+        const obj = flag ? res.data.daud_lines : res.data;
         const arrayItemsTranasaction = obj.map((data) => {
           return {
             item_disc: data.item_desc,
@@ -665,19 +667,19 @@ export class DetailsClass extends React.Component {
             unit_price: data.dt_price,
           };
         });
-        this.setState({transactionDetailList:arrayItemsTranasaction})
+        this.setState({ transactionDetailList: arrayItemsTranasaction })
         console.log(res.data, "transaction pdf");
       }
     });
   };
 
- 
+
   handleInvoiceSearch = async event => {
     let { invoice, visible } = this.state;
     invoice = event.target.value;
     visible = true;
-     this.setState({ invoice, visible });
-      this.searchAllInvoice();
+    await this.setState({ invoice, visible });
+    this.searchAllInvoice();
   };
   handleSearchClick = key => {
     if (!this.state.visible) {
@@ -695,13 +697,13 @@ export class DetailsClass extends React.Component {
   };
 
   handleSelectInvoice = async data => {
-    let { invoice } = this.state;    
+    let { invoice } = this.state;
     invoice = data.sa_transacno_ref;
-    this.setState({transactionNo:data.id})
-    this.getIndividualTransaction(data.id,data.flag)
+    this.setState({ transactionNo: data.id })
+    this.getIndividualTransaction(data.id, data.flag)
     this.setState({ invoice, allInvoicesData: [] });
     this.handleSearchClick();
-    
+
   };
   render() {
     let {
@@ -715,7 +717,7 @@ export class DetailsClass extends React.Component {
       invoice
     } = this.state;
 
-    let { q_shipcost, q_discount, q_taxes, q_total ,q_discpercent } = formFields;
+    let { q_shipcost, q_discount, q_taxes, q_total, q_discpercent } = formFields;
 
     let { t } = this.props;
 
@@ -738,48 +740,48 @@ export class DetailsClass extends React.Component {
                   this.setState({ transactionNo: value });
                 }}
               /> */}
-              
 
 
-<div className="input-group-normal">
-                  <NormalInput
-                    disabled={this.props.disableEdit}
-                    placeholder="Enter here"
-                    value={invoice}
-                    name="invoice"
-                    onChange={this.handleInvoiceSearch}
-                    onClick={this.handleSearchClick}                    
-                  />
-                </div>
-                {this.state.visible?(
-              <div className="invoice-block" >
-                <div className="d-flex mt-3 table table-header w-100 m-0">
-                  <div className="col-6">{t("Invoice")}</div>
-                  <div className="col-6">{t("Customer Name")}</div>
-                  
-                </div>
-                <div className="response-table w-100 row">
-                  {this.state.allInvoicesData.length > 0 ? (
-                    this.state.allInvoicesData.map((item, index) => {
-                      return (
-                        <div
-                          className="row m-0 table-body w-100 border"
-                          onClick={() => this.handleSelectInvoice(item)
-                          }
-                          key={index}
-                        >
-                          <div className="col-6">{item.sa_transacno_ref}</div>
-                          <div className="col-6">{item.cust_name}</div>
-                        </div>
-                      );
-                    })
-                  ) : (
-                    <div className="text-center w-100">
-                      {t("No Data Available")}
-                    </div>
-                  )}
-                </div>
-                </div>):''}
+
+              <div className="input-group-normal">
+                <NormalInput
+                  disabled={this.props.disableEdit}
+                  placeholder="Enter here"
+                  value={invoice}
+                  name="invoice"
+                  onChange={this.handleInvoiceSearch}
+                  onClick={this.handleSearchClick}
+                />
+              </div>
+              {this.state.visible ? (
+                <div className="invoice-block" >
+                  <div className="d-flex mt-3 table table-header w-100 m-0">
+                    <div className="col-6">{t("Invoice")}</div>
+                    <div className="col-6">{t("Customer Name")}</div>
+
+                  </div>
+                  <div className="response-table w-100 row">
+                    {this.state.allInvoicesData.length > 0 ? (
+                      this.state.allInvoicesData.map((item, index) => {
+                        return (
+                          <div
+                            className="row m-0 table-body w-100 border"
+                            onClick={() => this.handleSelectInvoice(item)
+                            }
+                            key={index}
+                          >
+                            <div className="col-6">{item.sa_transacno_ref}</div>
+                            <div className="col-6">{item.cust_name}</div>
+                          </div>
+                        );
+                      })
+                    ) : (
+                      <div className="text-center w-100">
+                        {t("No Data Available")}
+                      </div>
+                    )}
+                  </div>
+                </div>) : ''}
 
             </div>
           </div>
@@ -831,7 +833,8 @@ export class DetailsClass extends React.Component {
                           item.item_code,
                           item.item_disc,
                           item.unit_price,
-                          item.quantity
+                          item.quantity,
+                          item.remarks
                         )
                       }
                     />
@@ -841,231 +844,236 @@ export class DetailsClass extends React.Component {
             ))}
             {detailsList
               ? detailsList.map((item, index) => {
-                  let { item_code, item_desc, item_price, item_quantity } =
-                    item;
-                  return (
-                    <tr key={index}>
-                      <td>
+                let { item_code, item_desc, item_price, item_quantity } =
+                  item;
+                return (
+                  <tr key={index}>
+                    <td>
+                      <NormalInput
+                        value={item_code}
+                        name={`item_code`}
+                        onChange={this.handleChange}
+                      />
+                    </td>
+                    <td>
+                      <div className="d-flex align-items-center justify-content-center">
                         <NormalInput
-                          value={item_code}
-                          name={`item_code`}
+                          value={item_desc}
+                          name={`item_desc`}
                           onChange={this.handleChange}
                         />
-                      </td>
-                      <td>
-                        <div className="d-flex align-items-center justify-content-center">
-                          <NormalInput
-                            value={item_desc}
-                            name={`item_desc`}
-                            onChange={this.handleChange}
-                          />
-                        </div>
-                      </td>
-                      <td>
-                        <div className="d-flex align-items-center justify-content-center">
-                          <NormalInput
-                            value={item_price}
-                            type={`number`}
-                            name={`item_price`}
-                            onChange={this.handleChange}
-                          />
-                        </div>
-                      </td>
-
-                      <td>
+                      </div>
+                    </td>
+                    <td>
+                      <div className="d-flex align-items-center justify-content-center">
                         <NormalInput
-                          value={item_quantity}
-                          disabled={this.props.disableEdit}
-                          name={`item_quantity`}
-                          onKeyPress={(event) => {
-                            if (!/[0-9]/.test(event.key)) {
-                              event.preventDefault();
-                            }
-                          }}
+                          value={item_price}
                           type={`number`}
+                          name={`item_price`}
                           onChange={this.handleChange}
                         />
-                      </td>
+                      </div>
+                    </td>
 
-                      <td>
-                        <div className="d-flex align-items-center justify-content-center">
-                          <NormalButton
-                            disabled={this.props.disableEdit}
-                            buttonClass={"mx-2"}
-                            mainbg={true}
-                            className="warning"
-                            label="Select"
-                            onClick={() =>
-                              this.handleSelect(
-                                item_code,
-                                item_desc,
-                                item_price,
-                                item_quantity
-                              )
-                            }
-                          />
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })
+                    <td>
+                      <NormalInput
+                        value={item_quantity}
+                        disabled={this.props.disableEdit}
+                        name={`item_quantity`}
+                        onKeyPress={(event) => {
+                          if (!/[0-9]/.test(event.key)) {
+                            event.preventDefault();
+                          }
+                        }}
+                        type={`number`}
+                        onChange={this.handleChange}
+                      />
+                    </td>
+
+                    <td>
+                      <div className="d-flex align-items-center justify-content-center">
+                        <NormalButton
+                          disabled={this.props.disableEdit}
+                          buttonClass={"mx-2"}
+                          mainbg={true}
+                          className="warning"
+                          label="Select"
+                          onClick={() =>
+                            this.handleSelect(
+                              item_code,
+                              item_desc,
+                              item_price,
+                              item_quantity
+                            )
+                          }
+                        />
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })
               : null}
           </TableWrapper>
 
           <div className="row mt-5"></div>
-          <TableWrapper
-            headerDetails={headerSelectedDetails}
-            // queryHandler={this.handlePagination}
-            // pageMeta={pageMeta}
-          >
+          <div className="table">
+            <table className="tableForQuotation">
+              <th>Item Code</th>
+              <th>Item Description</th>
+              <th width="30%">Remarks</th>
+              <th>Quantity</th>
+              <th>Unit Price</th>
+              <th>Discount Amt</th>
+              <th>Discount(%)</th>
             {storedItemList
               ? storedItemList.map((item, index) => {
-                  let {
-                    item_code,
-                    item_desc,
-                    item_remarks,
-                    item_price,
-                    item_quantity,
-                    editing,
-                    discount_amt,
-                    discount_percent
-                  } = item;
-                  return editing == false ? (
-                    <tr key={index}>
-                      <td>
-                        <div className="d-flex align-items-start justify-content-start">
-                          {item_code}
-                        </div>
-                      </td>
-                      <td>
-                        <div className="d-flex align-items-start justify-content-start">
-                          {item_desc}
-                        </div>
-                      </td>
-                      <td>
-                        <div className="d-flex align-items-start justify-content-start">
-                          {item_remarks}
-                        </div>
-                      </td>
-                      <td>
-                        <div className="d-flex align-items-end justify-content-end">
-                          {item_quantity}
-                        </div>
-                      </td>
-                      <td>
-                        <div className="d-flex align-items-end justify-content-end">
-                          {item_price}
-                        </div>
-                      </td>
-                      <td>
-                        <div className="d-flex align-items-end justify-content-end">
-                          {discount_amt}
-                        </div>
-                      </td>
-                      <td>
-                        <div className="d-flex align-items-end justify-content-end">
-                          {discount_percent
+                let {
+                  item_code,
+                  item_desc,
+                  item_remarks,
+                  item_price,
+                  item_quantity,
+                  editing,
+                  discount_amt,
+                  discount_percent
+                } = item;
+                return editing == false ? (
+                  <tr key={index}>
+                    <td>
+                      <div className="d-flex align-items-start justify-content-start">
+                        {item_code}
+                      </div>
+                    </td>
+                    <td>
+                      <div className="d-flex align-items-start justify-content-start">
+                        {item_desc}
+                      </div>
+                    </td>
+                    <td>
+                      <div className="d-flex align-items-start justify-content-start">
+                        {item_remarks}
+                      </div>
+                    </td>
+                    <td>
+                      <div className="d-flex align-items-end justify-content-end">
+                        {item_quantity}
+                      </div>
+                    </td>
+                    <td>
+                      <div className="d-flex align-items-end justify-content-end">
+                        {item_price}
+                      </div>
+                    </td>
+                    <td>
+                      <div className="d-flex align-items-end justify-content-end">
+                        {discount_amt}
+                      </div>
+                    </td>
+                    <td>
+                      <div className="d-flex align-items-end justify-content-end">
+                        {discount_percent
+                        }
+                      </div>
+                    </td>
+                    <td>
+                      <div className="d-flex align-items-center justify-content-center">
+                        <img
+                          src={updateBtn}
+                          width="35"
+                          height="35"
+                          alt=""
+                          className="action-img bg-transparent"
+                          onClick={
+                            this.props.disableEdit == false
+                              ? () => this.handleEdit(item_code)
+                              : ""
                           }
-                        </div>
-                      </td>
-                      <td>
-                        <div className="d-flex align-items-center justify-content-center">
-                          <img
-                            src={updateBtn}
-                            width="35"
-                            height="35"
-                            alt=""
-                            className="action-img bg-transparent"
-                            onClick={
-                              this.props.disableEdit == false
-                                ? () => this.handleEdit(item_code)
-                                : ""
-                            }
-                          />
-                        </div>
-                      </td>
-                      <td>
-                        <div className="d-flex align-items-center justify-content-center">
-                          <img
-                            src={deleteBtn}
-                            width="35"
-                            height="35"
-                            alt=""
-                            className="action-img bg-transparent "
-                            onClick={
-                              this.props.disableEdit == false
-                                ? () => this.handleRemoveStoredItem(item_code)
-                                : ""
-                            }
-                          />
-                        </div>
-                      </td>
-                    </tr>
-                  ) : (
-                    <tr key={index}>
-                      <td>
-                        <div className="d-flex align-items-center justify-content-center">
-                          {item_code}
-                        </div>
-                      </td>
-                      <td>
-                        <div className="d-flex align-items-center justify-content-center">
-                          {item_desc}
-                        </div>
-                      </td>
-                      <td>
-                        <div className="d-flex align-items-center justify-content-center">
-                          <NormalInput
-                            value={item_remarks}
-                            disabled={this.props.disableEdit}
-                            name={item_code}
-                            onChange={this.handleEditChangeRemarks}
-                          />
-                        </div>
-                      </td>
-                      <td>
-                        <div className="d-flex align-items-center justify-content-center">
-                          <NormalInput
-                            value={item_quantity}
-                            disabled={this.props.disableEdit}
-                            name={item_code}
-                            onChange={this.handleEditChangeQuantity}
-                          />
-                        </div>
-                      </td>
-                      <td>
-                        <div className="d-flex align-items-center justify-content-center">
-                          <NormalInput
-                            value={item_price}
-                            disabled={this.props.disableEdit}
-                            name={item_code}
-                            onChange={this.handleEditChangePrice}
-                          />
-                        </div>
-                      </td>
-                      
-                      <td><div className="input-group">
-                  <NormalInput
-                    placeholder=""
-                    value={discount_amt}
-                    type="number"
-                    name={item_code}
-                    onChange={this.handleEditChangediscountAmount}
-                  /></div>
-                  </td>
-                      
-                      <td>
-                      <div className="input-group">
+                        />
+                      </div>
+                    </td>
+                    <td>
+                      <div className="d-flex align-items-center justify-content-center">
+                        <img
+                          src={deleteBtn}
+                          width="35"
+                          height="35"
+                          alt=""
+                          className="action-img bg-transparent "
+                          onClick={
+                            this.props.disableEdit == false
+                              ? () => this.handleRemoveStoredItem(item_code)
+                              : ""
+                          }
+                        />
+                      </div>
+                    </td>
+                  </tr>
+                ) : (
+                  <tr key={index}>
+                    <td>
+                      <div className="d-flex align-items-center justify-content-center">
+                        {item_code}
+                      </div>
+                    </td>
+                    <td>
+                      <div className="d-flex align-items-center justify-content-center">
+                        {item_desc}
+                      </div>
+                    </td>
+                    <td>
+                      <div className="d-flex align-items-center justify-content-center">
+                        <NormalTextarea
+                          value={item_remarks}
+                          rows="10"
+                          disabled={this.props.disableEdit}
+                          name={item_code}
+                          onChange={this.handleEditChangeRemarks}
+                        />
+                      </div>
+                    </td>
+                    <td>
+                      <div className="d-flex align-items-center justify-content-center">
+                        <NormalInput
+                          value={item_quantity}
+                          disabled={this.props.disableEdit}
+                          name={item_code}
+                          onChange={this.handleEditChangeQuantity}
+                        />
+                      </div>
+                    </td>
+                    <td>
+                      <div className="d-flex align-items-center justify-content-center">
+                        <NormalInput
+                          value={item_price}
+                          disabled={this.props.disableEdit}
+                          name={item_code}
+                          onChange={this.handleEditChangePrice}
+                        />
+                      </div>
+                    </td>
+
+                    <td><div className="input-group">
                       <NormalInput
-                    placeholder=""
-                    value={discount_percent}
-                    type="number"
-                    name={item_code}
-                    onChange={this.handleEditChangediscountPercent}
-                  />
-                  </div>
-                  </td>
-                      {/* <td>
+                        placeholder=""
+                        value={discount_amt}
+                        type="number"
+                        name={item_code}
+                        onChange={this.handleEditChangediscountAmount}
+                      /></div>
+                    </td>
+
+                    <td>
+                      <div className="input-group">
+                        <NormalInput
+                          placeholder=""
+                          value={discount_percent}
+                          type="number"
+                          name={item_code}
+                          onChange={this.handleEditChangediscountPercent}
+                        />
+                      </div>
+                    </td>
+                    {/* <td>
                               <div className="d-flex align-items-center justify-content-center">
                                 <img
                                   src={closeBtn}
@@ -1077,27 +1085,28 @@ export class DetailsClass extends React.Component {
                                 />
                               </div>
                             </td> */}
-                      <td>
-                        <div className="d-flex align-items-center justify-content-center">
-                          <img
-                            src={saveBtn}
-                            width="35"
-                            height="35"
-                            alt=""
-                            className="action-img bg-transparent "
-                            onClick={
-                              this.props.disableEdit == false
-                                ? () => this.handleSave(item_code)
-                                : ""
-                            }
-                          />
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })
+                    <td>
+                      <div className="d-flex align-items-center justify-content-center">
+                        <img
+                          src={saveBtn}
+                          width="35"
+                          height="35"
+                          alt=""
+                          className="action-img bg-transparent "
+                          onClick={
+                            this.props.disableEdit == false
+                              ? () => this.handleSave(item_code)
+                              : ""
+                          }
+                        />
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })
               : null}
-          </TableWrapper>
+          </table>
+          </div>
 
           <div className="row justify-content-end mt-5">
             <div className="col-4">
@@ -1154,7 +1163,7 @@ export class DetailsClass extends React.Component {
                     disabled={true}
                     value={q_taxes}
                     name="q_taxes"
-                    // onChange={this.handleChangeDetails}
+                  // onChange={this.handleChangeDetails}
                   />
                 </div>
               </div>
@@ -1169,7 +1178,7 @@ export class DetailsClass extends React.Component {
                     disabled={true}
                     value={q_total}
                     name="q_total"
-                    // onChange={this.handleChangeDetails}
+                  // onChange={this.handleChangeDetails}
                   />
                 </div>
               </div>

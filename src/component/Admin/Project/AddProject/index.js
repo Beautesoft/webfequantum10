@@ -249,6 +249,7 @@ export class AddProjectClass extends Component {
         // this.state.projectList = res.data.dataList
         this.state.formFields["projectTitle"] = res.data.dataList[0].title;
         this.state.formFields["projectDesc"] = res.data.dataList[0].desc;
+        this.state.formFields["custId"] = res.data.dataList[0].cust_id;
         // const people = [ {name: "john", age:23},
         //         {name: "john", age:43},
         //         {name: "jim", age:101},

@@ -1130,7 +1130,7 @@ export class AddWorkOrderInvoiceClass extends Component {
 
     let { t } = this.props;
     return (
-      <div className="px-5 container create-quotation">
+      <div className="px-5  create-quotation">
         <div className="head-label-nav">
           <p
             className="category"

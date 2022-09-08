@@ -2045,7 +2045,7 @@ export class CartNewClass extends Component {
           {console.log("sfgdfjhfghjfjgkjk", cartData)}
           <Payment
             cartData={cartData}
-            id={basicApptDetail.custId}
+            id={this.props.location.state?.customer_id ? this.props.location.state?.customer_id : basicApptDetail.custId}
             cartId={cartList.length > 0 ? cartList[0].cart_id : ""}
             handleModal={this.handleDialog}
           ></Payment>

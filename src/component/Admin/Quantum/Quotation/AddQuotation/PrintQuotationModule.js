@@ -28,9 +28,9 @@ export class PrintQuotationModuleClass extends Component {
     isOpenDate: false,
     signPhoto: "",
     isPrintPdfClick: false,
-    selectTemplate:"",
-    templates:[],
-    isModalVisibleTemplate:false
+    selectTemplate: "",
+    templates: [],
+    isModalVisibleTemplate: false
   };
 
   componentDidMount() {
@@ -50,19 +50,19 @@ export class PrintQuotationModuleClass extends Component {
       });
   };
 
-  getResponseDate =   () => {
+  getResponseDate = () => {
     this.props
       .getCommonApi(
         `quotationpdf/?searchid=${this.props.match.params.id}`
       )
       .then((res) => {
         console.log("responseofprint:", res);
-        this.setState({ responseData: res.data});
+        this.setState({ responseData: res.data });
       });
   };
 
-  
-  handleSignSaveClick = (imgData) => {   
+
+  handleSignSaveClick = (imgData) => {
     let formData = new FormData();
     formData.append("fk_quotation", this.props.match.params.id);
     formData.append(
@@ -102,20 +102,20 @@ export class PrintQuotationModuleClass extends Component {
     window.open(url);
   };
 
-  getAllTemplates= async()=>{
-    const res= await this.props.getCommonApi("termsandcondition/")
-    if(res.data?.dataList){
-    this.setState({ templates:res.data.dataList});    
+  getAllTemplates = async () => {
+    const res = await this.props.getCommonApi("termsandcondition/")
+    if (res.data?.dataList) {
+      this.setState({ templates: res.data.dataList });
     }
-   }
+  }
 
-   selectTemplate=(id)=>{
-    let { templates,  } = this.state;
-    const t= templates.find(x=>x.id==id);
-    this.setState({selectTemplate:t});
-   }
+  selectTemplate = (id) => {
+    let { templates, } = this.state;
+    const t = templates.find(x => x.id == id);
+    this.setState({ selectTemplate: t });
+  }
 
-   handleChange = ({ target: { value, name } }) => {
+  handleChange = ({ target: { value, name } }) => {
     this.selectTemplate(value.id)
   };
   handleToogleModalTemplate = () => {
@@ -130,13 +130,13 @@ export class PrintQuotationModuleClass extends Component {
       responseData = [],
       templates,
       selectTemplate
-      
+
     } = this.state;
     let {
       sub_data = {},
       footer = {},
-      } = responseData;
-      let{t}=this.props;
+    } = responseData;
+    let { t } = this.props;
     return (
       <>
         <div className="print-section container">
@@ -247,7 +247,10 @@ export class PrintQuotationModuleClass extends Component {
                     <div className="row m-0 mt-2" key={index}>
                       <div className="col-2">{item.quotation_itemcode}</div>
                       <div className="col-4 text-left">
-                        {item.quotation_itemdesc}
+                        <p>{item.quotation_itemdesc}
+                          <br />
+                          <br />
+                          {item.quotation_itemremarks}</p>
                       </div>
                       {/* <div className="col-2 text-right">{item.quotation_itemdesc}</div> */}
                       <div className="col-2 text-right">
@@ -263,7 +266,7 @@ export class PrintQuotationModuleClass extends Component {
                   );
                 })}
 
-               {/*  <div className="row table-header sub-total m-0 fs-14 f-600 mt-5">
+                {/*  <div className="row table-header sub-total m-0 fs-14 f-600 mt-5">
                    <div className="col-4 text-right">{sub_data.sub_total}</div> 
                   <div className="col-4 text-right"></div>
                   <div className="col-1 text-right">{sub_data.tot_qty}</div>
@@ -277,7 +280,7 @@ export class PrintQuotationModuleClass extends Component {
               </div>
               <div className="payment-detail my-4 fs-14 f-600 mb-5">
                 <div className="row m-0">
-                  <div className="col-7"></div>                
+                  <div className="col-7"></div>
                   <div className="col-5 text-right">
                     <div className="row">
                       <div className="col-6">Shipping Cost :</div>
@@ -310,8 +313,8 @@ export class PrintQuotationModuleClass extends Component {
               </div>
               <div className="invoice-footer mt-5">
                 <div className="row m-0">
-                
-                <div className="col-3 text-center p-1">
+
+                  <div className="col-3 text-center p-1">
                     {this.state.signPhoto ? (
                       <img
                         className={`sigImage`}
@@ -325,26 +328,26 @@ export class PrintQuotationModuleClass extends Component {
                         }
                       />
                     )}
-                    <br/>
+                    <br />
                     Customer Signature
                   </div>
                   <div className="col-9 text-center p-1">
-                </div>
+                  </div>
                   <div className="col-12 fs-12">
-                  Terms And Condition
-                    <p className="">                    
+                    Terms And Condition
+                    <p className="">
                       {selectTemplate}
                     </p>
 
-                    
+
                   </div>
-                  
+
                 </div>
               </div>
             </div>
 
             <div className="pt-5 d-flex text-center action-buttons">
-              
+
               <div className="w-100 mr-2">
                 <NormalButton
                   onClick={() => {
@@ -356,7 +359,7 @@ export class PrintQuotationModuleClass extends Component {
                   success={true}
                   className="print"
                 />
-                
+
                 {this.state.isPrintPdfClick ? (
                   <PDFDownloadLink
                     document={
@@ -379,7 +382,7 @@ export class PrintQuotationModuleClass extends Component {
                 ) : null}
               </div>
               <div className="w-100 mr-2">
-              <NormalButton
+                <NormalButton
                   onClick={() => this.handleToogleModalTemplate()}
                   label="Term And Condition "
                   success={true}
@@ -403,21 +406,23 @@ export class PrintQuotationModuleClass extends Component {
                     {("Terms And Condition")}
                   </label>
                   <NormalSelect
-                  options={templates.map(x=>{return{id:x.template_name,value:x.template_text,label:x.template_name}})}
-                  value={selectTemplate}
-                  name="tandc"
-                 onChange={(event)=>{this.setState({selectTemplate:event.target.value});
-                this.handleToogleModalTemplate()}}
-                />
+                    options={templates.map(x => { return { id: x.template_name, value: x.template_text, label: x.template_name } })}
+                    value={selectTemplate}
+                    name="tandc"
+                    onChange={(event) => {
+                      this.setState({ selectTemplate: event.target.value });
+                      this.handleToogleModalTemplate()
+                    }}
+                  />
                 </div >
-                
+
               </div>
-              
+
             </div>
 
           </>
         </NormalModal>
-             </>
+      </>
     );
   }
 }
@@ -437,7 +442,7 @@ const mapDispatchToProps = (dispatch) => {
   );
 };
 
-export const PrintQuotationModule =(connect(
+export const PrintQuotationModule = (connect(
   mapStateToProps,
   mapDispatchToProps
 ))(PrintQuotationModuleClass);

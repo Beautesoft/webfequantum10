@@ -225,7 +225,11 @@ export class PrintInvoiceModuleClass extends Component {
                     <div className="row m-0 mt-2" key={index}>
                       <div className="col-2">{item.quotation_itemcode}</div>
                       <div className="col-4 text-left">
-                        {item.quotation_itemdesc}
+                        <p>{item.quotation_itemdesc}
+                          <br />
+                          <br />
+                          {item.quotation_itemremarks}</p>
+                 
                       </div>
                       {/* <div className="col-2 text-right">{item.quotation_itemdesc}</div> */}
                       <div className="col-2 text-right">

@@ -10,6 +10,7 @@ import {
   TableWrapper,
   InputSearch,
   NormalSelect,
+  NormalTextarea,
 } from "component/common";
 import { dateFormat } from "service/helperFunctions";
 import { withTranslation } from "react-i18next";
@@ -836,7 +837,8 @@ console.log(this.props.quoId,"this.props.quoId")
                       </td>
                       <td>
                         <div className="d-flex align-items-center justify-content-center">
-                          <NormalInput
+                          <NormalTextarea
+                          rows="10"
                             value={item_remarks}
                             disabled={this.props.disableEdit}
                             name={item_code}

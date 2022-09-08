@@ -10,29 +10,35 @@
 
   ul {
     display: flex;
+
     li {
       margin-right: 41px;
     }
+
     // justify-content: space-between;
     a {
       padding: 0 0 1.3rem 0;
     }
   }
 
-  .action-img{
+  .action-img {
     cursor: pointer;
   }
 
   .btn {
     font-family: Muli-Regular;
   }
+
   .copy-btn {
     margin-top: 200px;
   }
+
   .icon-calendar {
     color: #b2b2b2;
   }
+
   .input-group {
+
     input,
     textarea {
       font-size: fontSize(14px);
@@ -41,16 +47,17 @@
     }
   }
 
-  .select-form-control{
+  .select-form-control {
     font-size: fontSize(14px);
-      font-family: 'Montserrat', sans-serif;
-      font-weight: normal;
-      background: #f9f9f9;
-      border: 0.25px solid #c0c0c0;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: normal;
+    background: #f9f9f9;
+    border: 0.25px solid #c0c0c0;
     height: 50px;
   }
 
   .input-group-normal {
+
     input,
     textarea {
       font-size: fontSize(14px);
@@ -62,9 +69,10 @@
     }
   }
 
-  
+
 
   .input-group-desc {
+
     input,
     textarea {
       font-size: fontSize(14px);
@@ -76,9 +84,10 @@
     }
   }
 
-  
+
 
   .input-group-address {
+
     input,
     textarea {
       font-size: fontSize(14px);
@@ -91,6 +100,7 @@
   }
 
   .input-group-discount {
+
     input,
     textarea {
       font-size: fontSize(14px);
@@ -103,6 +113,7 @@
   }
 
   .input-group-details {
+
     input,
     textarea {
       font-size: fontSize(14px);
@@ -113,9 +124,10 @@
       height: 40px;
     }
   }
-  
+
   .sidebar-menu {
     display: flex;
+
     &.active {
       .sidebar-menu-desc {
         color: $white;
@@ -125,6 +137,7 @@
         border-color: $primary-color;
       }
     }
+
     .sidebar-menu-desc {
       color: #666666;
       font-size: fontSize(14px);
@@ -153,6 +166,7 @@
     margin: 70px 25px 5px 10px !important;
     box-shadow: 0px -1px 4px rgba(0, 0, 0, 0.13);
     border-radius: 4px;
+
     .search {
       width: 100%;
       border: 1px solid #ced4da;
@@ -160,14 +174,17 @@
       margin-top: 10px;
       height: 30px;
     }
+
     .table-header {
       background-color: $temptablehead-color;
       border-radius: 4px;
       padding: 3px;
     }
+
     .response-table {
       overflow-y: auto;
     }
+
     .table {
       table {
         thead {
@@ -177,19 +194,23 @@
             }
           }
         }
+
         tbody {
           tr {
             height: 0px;
+
             td {
               font-size: 14px;
               padding: 5px 5px;
             }
           }
+
           // .no-data{
           //   width:100px;
           // }
         }
       }
+
       .no-data {
         p {
           min-height: 180px;
@@ -197,6 +218,7 @@
       }
     }
   }
+
   .customerSearch-block {
     width: max-content;
     display: flex;
@@ -216,6 +238,7 @@
     margin: 70px 25px 5px 10px !important;
     box-shadow: 0px -1px 4px rgba(0, 0, 0, 0.13);
     border-radius: 4px;
+
     .search {
       width: 100%;
       border: 1px solid #ced4da;
@@ -223,14 +246,17 @@
       margin-top: 10px;
       height: 30px;
     }
+
     .table-header {
       background-color: $temptablehead-color;
       border-radius: 4px;
       padding: 3px;
     }
+
     .response-table {
       overflow-y: auto;
     }
+
     .table {
       table {
         thead {
@@ -240,19 +266,23 @@
             }
           }
         }
+
         tbody {
           tr {
             height: 0px;
+
             td {
               font-size: 14px;
               padding: 5px 5px;
             }
           }
+
           // .no-data{
           //   width:100px;
           // }
         }
       }
+
       .no-data {
         p {
           min-height: 180px;
@@ -260,16 +290,18 @@
       }
     }
   }
-  .table{
-    border: 0.25px solid #c0c0c0;
-    margin-left: 15px;
-    margin-top: 1rem;
-     
-  } 
-  .table  th , .table td{
-   border:1px solid #dee2e6; 
-  }   
-  .close{
+
+  .tableForQuotation {
+    width: 100%;
+  }
+
+  .tableForQuotation th {
+    background-color: #3c4087;
+    color: white;
+    font-weight: normal;
+  }
+
+  .close {
     margin-left: -1.5rem;
   }
 }

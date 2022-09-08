@@ -50,13 +50,14 @@ export class AddQuotationClass extends Component {
       status: "",
       currency_id: "",
       preparedBy: "",
-      remarks: "",     
-      contactPerson:[],
-      paymentTerms:'',
-      paymentSchedule:''
-      
+      remarks: "",
+      contactPerson: [],
+      paymentTerms: '',
+      paymentSchedule: '',
+      cust_id: ""
+
     },
-    currencyOption:[],
+    currencyOption: [],
     fkProject: "",
     statusOption: [],
     countryOption: [],
@@ -85,9 +86,9 @@ export class AddQuotationClass extends Component {
     visible: false,
     visibleCustomer: false,
     projectOption: [],
-    customerOption:[],
-    paymentScheduleAndTerms:[],
-    
+    customerOption: [],
+    paymentScheduleAndTerms: [],
+
   };
 
   componentWillMount = () => {
@@ -130,12 +131,12 @@ export class AddQuotationClass extends Component {
   componentWillUnmount() {
     this.state.isMounted = false;
   }
-  
+
   updateState = (data) => {
     if (this.state.isMounted) this.setState(data);
   };
 
-  
+
   handleOutsideClick = e => {
     if (this.node != null) {
       if (this.node.contains(e.target)) {
@@ -153,7 +154,7 @@ export class AddQuotationClass extends Component {
       .then(key => {
         let { status, data } = key;
         if (status === 200) {
-          
+
           this.setState({ projectOption: data });
         }
       });
@@ -163,8 +164,8 @@ export class AddQuotationClass extends Component {
     let { formFields, visible } = this.state;
     formFields["projectTitle"] = event.target.value;
     visible = true;
-     this.setState({ formFields, visible });
-     this.search();
+    this.setState({ formFields, visible });
+    this.search();
   };
   handleSearchClick = key => {
     if (!this.state.visible) {
@@ -182,48 +183,49 @@ export class AddQuotationClass extends Component {
   };
 
   handleSelectProject = async data => {
-    let { formFields } = this.state;    
+    let { formFields } = this.state;
     formFields["projectTitle"] = data.title;
-    formFields["companyName"]=data.customer_name;
+    formFields["companyName"] = data.customer_name;
+    formFields["cust_id"] = data.cust_id;
     this.props
-    .getCommonApi(
-      `custappt/?search=${data.customer_name}`
-    )
-    .then(key => {
-      let { status, data } = key;
-      if (status === 200) {
-        if(data.length> 0){
-        if(!data[0].cust_corporate){
-          let { formFields } = this.state;
-          formFields["attnTo"] = data[0].cust_name;
-          formFields["contactPerson"]=[];
-          }else{
-            formFields["contactPerson"]=data[0].contactperson
+      .getCommonApi(
+        `custappt/?search=${data.customer_name}`
+      )
+      .then(key => {
+        let { status, data } = key;
+        if (status === 200) {
+          if (data.length > 0) {
+            if (!data[0].cust_corporate) {
+              let { formFields } = this.state;
+              formFields["attnTo"] = data[0].cust_name;
+              formFields["contactPerson"] = [];
+            } else {
+              formFields["contactPerson"] = data[0].contactperson
+            }
+
+          } else {
+            formFields["attnTo"] = formFields["companyName"];
+            formFields["contactPerson"] = [];
           }
-          
-        }else{
-          formFields["attnTo"]=formFields["companyName"];
-          formFields["contactPerson"]=[];
+
+        } else if (status === 204) {
+          formFields["attnTo"] = formFields["companyName"];
+          formFields["contactPerson"] = [];
         }
-        
-      }else if(status === 204){
-        formFields["attnTo"]=formFields["companyName"];
-        formFields["contactPerson"]=[];
-      }
-      this.setState({ formFields, projectOption: [] });
-    });
+        this.setState({ formFields, projectOption: [] });
+      });
     this.setState({ formFields, projectOption: [] });
     this.handleSearchClick();
-    
+
   };
 
   handleSelectCustomer = async data => {
-    let { formFields } = this.state;    
-    formFields["companyName"] = data.cust_name;    
-    if(!data.cust_corporate){
-    formFields["attnTo"] = data.cust_name;
-    }else{
-      formFields["contactPerson"]=data.contactperson
+    let { formFields } = this.state;
+    formFields["companyName"] = data.cust_name;
+    if (!data.cust_corporate) {
+      formFields["attnTo"] = data.cust_name;
+    } else {
+      formFields["contactPerson"] = data.contactperson
     }
     this.setState({ formFields, customerOption: [] });
     this.handleCustomerSearchClick();
@@ -247,8 +249,8 @@ export class AddQuotationClass extends Component {
     let { formFields, visibleCustomer } = this.state;
     formFields["companyName"] = event.target.value;
     visibleCustomer = true;
-     this.setState({ formFields, visibleCustomer });
-     this.searchCustomer();
+    this.setState({ formFields, visibleCustomer });
+    this.searchCustomer();
   };
   searchCustomer = () => {
     let { formFields } = this.state;
@@ -258,8 +260,8 @@ export class AddQuotationClass extends Component {
       )
       .then(key => {
         let { status, data } = key;
-        if (status === 200) { 
-          this.setState({customerOption:data });
+        if (status === 200) {
+          this.setState({ customerOption: data });
         }
       });
   };
@@ -351,7 +353,7 @@ export class AddQuotationClass extends Component {
       }
     });
   };
-  getCurrency= () => {
+  getCurrency = () => {
     let { currencyOption } = this.state;
     currencyOption = [];
     this.props.getCommonApi(`currencytable`).then((res) => {
@@ -360,22 +362,22 @@ export class AddQuotationClass extends Component {
           value: key.id,
           label: key.curr_code,
           code: key.curr_code,
-          rate:key.curr_rate,
+          rate: key.curr_rate,
           active: key.curr_isactive,
         });
       }
       this.setState({ currencyOption });
     });
   };
-  getPaymentScheduleAndTerms =() => {
-    if(this.props.match.params.id){
-    let { paymentScheduleAndTerms } = this.state;
-    paymentScheduleAndTerms = [];
-    this.props.getCommonApi(`quotationpayment/?searchqdetailid=${this.props.match.params.id}`).then((res) => {
-      paymentScheduleAndTerms= res.data.map(x=>({id:x.id,paymentSchedule:x.payment_schedule,paymentTerms:x.payment_term}))
-      this.setState({ paymentScheduleAndTerms });
-    });
-  }
+  getPaymentScheduleAndTerms = () => {
+    if (this.props.match.params.id) {
+      let { paymentScheduleAndTerms } = this.state;
+      paymentScheduleAndTerms = [];
+      this.props.getCommonApi(`quotationpayment/?searchqdetailid=${this.props.match.params.id}`).then((res) => {
+        paymentScheduleAndTerms = res.data.map(x => ({ id: x.id, paymentSchedule: x.payment_schedule, paymentTerms: x.payment_term }))
+        this.setState({ paymentScheduleAndTerms });
+      });
+    }
   };
   getCountry = () => {
     let { countryOption } = this.state;
@@ -493,7 +495,7 @@ export class AddQuotationClass extends Component {
             res.data[0].q_discount;
           this.state.formFieldsDetailsStored.q_taxes = res.data[0].q_taxes;
           this.state.formFieldsDetailsStored.q_total = res.data[0].q_total;
-          this.state.formFieldsDetailsStored.q_discpercent=res.data[0].q_discpercent
+          this.state.formFieldsDetailsStored.q_discpercent = res.data[0].q_discpercent
           // this.state.formFieldsDetailsStored.push("q_shipcost":res.data[0].q_shipcost)
           this.setState(this.state.formFieldsDetailsStored);
           console.log(
@@ -518,8 +520,8 @@ export class AddQuotationClass extends Component {
               item_remarks: item.quotation_itemremarks,
               item_price: item.quotation_unitprice,
               item_quantity: item.quotation_quantity,
-              discount_amt:item.discount_amt,
-              discount_percent:item.discount_percent,
+              discount_amt: item.discount_amt,
+              discount_percent: item.discount_percent,
               editing: false,
             });
             this.state.itemListBeforeEdit.push({
@@ -673,6 +675,7 @@ export class AddQuotationClass extends Component {
         // this.state.projectList = res.data.dataList
         this.state.formFields["quoNumber"] =
           res.data.dataList[0].quotation_number;
+        this.state.formFields["cust_id"] = res.data.dataList[0].cust_id;
         this.state.formFields["projectTitle"] = res.data.dataList[0].title;
         this.state.formFields["companyName"] = res.data.dataList[0].company;
         this.state.formFields["quoDate"] = res.data.dataList[0].created_at;
@@ -775,7 +778,7 @@ export class AddQuotationClass extends Component {
       if (!found) {
         this.props
           .commonDeleteApi(`quotationitem/${item.item_id}/`)
-          .then((res) => {});
+          .then((res) => { });
       }
     }
 
@@ -869,9 +872,9 @@ export class AddQuotationClass extends Component {
       "bill_city",
       this.state.formFieldsBillingStored.city
         ? cityOption.find(
-            (option) =>
-              option.value === parseInt(this.state.formFieldsBillingStored.city)
-          ).label
+          (option) =>
+            option.value === parseInt(this.state.formFieldsBillingStored.city)
+        ).label
         : ""
     );
 
@@ -879,10 +882,10 @@ export class AddQuotationClass extends Component {
       "bill_state",
       this.state.formFieldsBillingStored.state
         ? stateOption.find(
-            (option) =>
-              option.value ===
-              parseInt(this.state.formFieldsBillingStored.state)
-          ).label
+          (option) =>
+            option.value ===
+            parseInt(this.state.formFieldsBillingStored.state)
+        ).label
         : ""
     );
 
@@ -890,10 +893,10 @@ export class AddQuotationClass extends Component {
       "bill_country",
       this.state.formFieldsBillingStored.country
         ? countryOption.find(
-            (option) =>
-              option.value ===
-              parseInt(this.state.formFieldsBillingStored.country)
-          ).label
+          (option) =>
+            option.value ===
+            parseInt(this.state.formFieldsBillingStored.country)
+        ).label
         : ""
     );
     // console.log("countryOption.find(option => option.value === parseInt(this.state.formFieldsBillingStored.country)).label",countryOption.find(option => option.value === parseInt(this.state.formFieldsBillingStored.country)).label)
@@ -933,10 +936,10 @@ export class AddQuotationClass extends Component {
       "ship_city",
       this.state.formFieldsShippingStored.city
         ? cityOption.find(
-            (option) =>
-              option.value ===
-              parseInt(this.state.formFieldsShippingStored.city)
-          ).label
+          (option) =>
+            option.value ===
+            parseInt(this.state.formFieldsShippingStored.city)
+        ).label
         : ""
     );
 
@@ -944,10 +947,10 @@ export class AddQuotationClass extends Component {
       "ship_state",
       this.state.formFieldsShippingStored.state
         ? stateOption.find(
-            (option) =>
-              option.value ===
-              parseInt(this.state.formFieldsShippingStored.state)
-          ).label
+          (option) =>
+            option.value ===
+            parseInt(this.state.formFieldsShippingStored.state)
+        ).label
         : ""
     );
 
@@ -955,10 +958,10 @@ export class AddQuotationClass extends Component {
       "ship_country",
       this.state.formFieldsShippingStored.country
         ? countryOption.find(
-            (option) =>
-              option.value ===
-              parseInt(this.state.formFieldsShippingStored.country)
-          ).label
+          (option) =>
+            option.value ===
+            parseInt(this.state.formFieldsShippingStored.country)
+        ).label
         : ""
     );
 
@@ -1002,6 +1005,7 @@ export class AddQuotationClass extends Component {
         console.log("statusValue", statusValue);
         const formData = new FormData();
         formData.append("quotation_number", formFields.quoNumber);
+        formData.append("cust_id", formFields.cust_id);
         formData.append("title", formFields.projectTitle);
         formData.append("company", formFields.companyName);
         formData.append(
@@ -1035,7 +1039,7 @@ export class AddQuotationClass extends Component {
             `${this.props.match.params.id}/`,
             formData
           );
-          
+
           console.log(resQuo);
           await this.handleAddressSubmit(resQuo);
           await this.handleItemDetailsSubmit(resQuo);
@@ -1061,13 +1065,13 @@ export class AddQuotationClass extends Component {
             this.state.fkProject
           );
           console.log("this.state.fkProject", this.state.fkProject);
-          
+
           var resQuo = await this.props.createQuotation(formData);
           console.log("resQuo in createQuotation", resQuo);
           console.log("resQuo.data.id", resQuo.data.id);
-          for(let value of this.state.paymentScheduleAndTerms){
-            this.addPaymentSchedule(resQuo.data.id,value)
-          }                   
+          for (let value of this.state.paymentScheduleAndTerms) {
+            this.addPaymentSchedule(resQuo.data.id, value)
+          }
           await this.handleAddressSubmit(resQuo);
           await this.handleItemDetailsSubmit(resQuo);
 
@@ -1077,33 +1081,33 @@ export class AddQuotationClass extends Component {
         }
       } else {
         this.validator.showMessages();
-        
+
       }
       // this.updateState({ is_loading: false });
     } catch (e) {
-           
+
     }
   };
-addPaymentScheduleToList=(value)=>{
-  let { paymentScheduleAndTerms, formFields } = this.state;
-                        paymentScheduleAndTerms.push(value);
-                        this.setState({ paymentScheduleAndTerms });
-                        formFields.paymentSchedule = ""; formFields.paymentTerms = "";
-                        this.setState({ formFields })
-}
+  addPaymentScheduleToList = (value) => {
+    let { paymentScheduleAndTerms, formFields } = this.state;
+    paymentScheduleAndTerms.push(value);
+    this.setState({ paymentScheduleAndTerms });
+    formFields.paymentSchedule = ""; formFields.paymentTerms = "";
+    this.setState({ formFields })
+  }
 
-addPaymentSchedule=async (quotationId,value)=>{
-  const formDataPaymentSchedule = new FormData();
-          formDataPaymentSchedule.append("payment_schedule",value.paymentSchedule);          
-          formDataPaymentSchedule.append("payment_term",value.paymentTerms);
-          formDataPaymentSchedule.append("active","active");          
-          formDataPaymentSchedule.append("fk_quotation",quotationId); 
-         return this.props.addPaymentSchedule(formDataPaymentSchedule)
-         
-}
+  addPaymentSchedule = async (quotationId, value) => {
+    const formDataPaymentSchedule = new FormData();
+    formDataPaymentSchedule.append("payment_schedule", value.paymentSchedule);
+    formDataPaymentSchedule.append("payment_term", value.paymentTerms);
+    formDataPaymentSchedule.append("active", "active");
+    formDataPaymentSchedule.append("fk_quotation", quotationId);
+    return this.props.addPaymentSchedule(formDataPaymentSchedule)
+
+  }
 
   render() {
-    let { formFields, statusOption, currentValue, navLinks, disableEdit ,currencyOption  } =
+    let { formFields, statusOption, currentValue, navLinks, disableEdit, currencyOption } =
       this.state;
 
     let {
@@ -1116,7 +1120,7 @@ addPaymentSchedule=async (quotationId,value)=>{
       status,
       currency_id,
       preparedBy,
-      remarks,      
+      remarks,
       contactPerson,
       paymentTerms,
       paymentSchedule
@@ -1124,7 +1128,7 @@ addPaymentSchedule=async (quotationId,value)=>{
 
     let { t } = this.props;
     return (
-      <div className="px-5 container create-quotation">
+      <div className="px-5  create-quotation">
         <div className="head-label-nav">
           <p
             className="category"
@@ -1171,39 +1175,39 @@ addPaymentSchedule=async (quotationId,value)=>{
                     value={projectTitle}
                     name="projectTitle"
                     onChange={this.handleSearch}
-                    onClick={this.handleSearchClick}                    
+                    onClick={this.handleSearchClick}
                   />
                 </div>
-                {this.state.visible?(
-              <div className="projectSearch-block" >
-                <div className="d-flex mt-3 table table-header w-100 m-0">
-                  <div className="col-6">{t("Project")}</div>
-                  <div className="col-6">{t("Customer Name")}</div>
-                  
-                </div>
-                <div className="response-table w-100 row">
-                  {this.state.projectOption.length > 0 ? (
-                    this.state.projectOption.map((item, index) => {
-                      return (
-                        <div
-                          className="row m-0 table-body w-100 border"
-                          onClick={() => this.handleSelectProject(item)
-                          }
-                          key={index}
-                        >
-                          <div className="col-6">{item.title}</div>
-                          <div className="col-6">{item.customer_name}</div>
-                          
-                        </div>
-                      );
-                    })
-                  ) : (
-                    <div className="text-center w-100">
-                      {t("No Data Available")}
+                {this.state.visible ? (
+                  <div className="projectSearch-block" >
+                    <div className="d-flex mt-3 table table-header w-100 m-0">
+                      <div className="col-6">{t("Project")}</div>
+                      <div className="col-6">{t("Customer Name")}</div>
+
                     </div>
-                  )}
-                </div>
-                </div>):''}
+                    <div className="response-table w-100 row">
+                      {this.state.projectOption.length > 0 ? (
+                        this.state.projectOption.map((item, index) => {
+                          return (
+                            <div
+                              className="row m-0 table-body w-100 border"
+                              onClick={() => this.handleSelectProject(item)
+                              }
+                              key={index}
+                            >
+                              <div className="col-6">{item.title}</div>
+                              <div className="col-6">{item.customer_name}</div>
+
+                            </div>
+                          );
+                        })
+                      ) : (
+                        <div className="text-center w-100">
+                          {t("No Data Available")}
+                        </div>
+                      )}
+                    </div>
+                  </div>) : ''}
                 <div>
                   {this.validator.message(
                     t("Project"),
@@ -1225,43 +1229,43 @@ addPaymentSchedule=async (quotationId,value)=>{
                     onClick={this.handleCustomerSearchClick}
                   />
                 </div>
-                {this.state.visibleCustomer? (
-              <div className="customerSearch-block">
-                <div className="d-flex mt-3 table table-header w-100 m-0">
-                  <div className="col-2">{t("Name")}</div>
-                  <div className="col-2">{t("Phone")}</div>
-                  <div className="col-2">{t("Customer Code")}</div>
-                  <div className="col-2">{t("Reference")}</div>
-                  <div className="col-3">{t("Email")}</div>
-                  <div className="col-1">{t("NRIC")}</div>
-                </div>
-                <div className="response-table w-100 row">
-                  {this.state.customerOption.length > 0 ? (
-                   this.state. customerOption.map((item, index) => {
-                      return (
-                        <div
-                          className="row m-0 table-body w-100 border"
-                          onClick={() => this.handleSelectCustomer(item)
-                          }
-                          key={index}
-                        >
-                          <div className="col-2">{item.cust_name}</div>
-                          <div className="col-2">{item.cust_phone1}</div>
-                          <div className="col-2">{item.cust_code}</div>
-                          <div className="col-2">{item.cust_refer}</div>
-                          <div className="col-3">{item.cust_email}</div>
-                          <div className="col-1">{item.cust_nric}</div>
-                        </div>
-                      );
-                    })
-                  ) : (
-                    <div className="text-center w-100">
-                      {t("No Data Available")}
+                {this.state.visibleCustomer ? (
+                  <div className="customerSearch-block">
+                    <div className="d-flex mt-3 table table-header w-100 m-0">
+                      <div className="col-2">{t("Name")}</div>
+                      <div className="col-2">{t("Phone")}</div>
+                      <div className="col-2">{t("Customer Code")}</div>
+                      <div className="col-2">{t("Reference")}</div>
+                      <div className="col-3">{t("Email")}</div>
+                      <div className="col-1">{t("NRIC")}</div>
                     </div>
-                  )}
-                </div>
-              </div>
-            ) : null}
+                    <div className="response-table w-100 row">
+                      {this.state.customerOption.length > 0 ? (
+                        this.state.customerOption.map((item, index) => {
+                          return (
+                            <div
+                              className="row m-0 table-body w-100 border"
+                              onClick={() => this.handleSelectCustomer(item)
+                              }
+                              key={index}
+                            >
+                              <div className="col-2">{item.cust_name}</div>
+                              <div className="col-2">{item.cust_phone1}</div>
+                              <div className="col-2">{item.cust_code}</div>
+                              <div className="col-2">{item.cust_refer}</div>
+                              <div className="col-3">{item.cust_email}</div>
+                              <div className="col-1">{item.cust_nric}</div>
+                            </div>
+                          );
+                        })
+                      ) : (
+                        <div className="text-center w-100">
+                          {t("No Data Available")}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ) : null}
                 <div>
                   {this.validator.message(
                     t("Company Name"),
@@ -1320,22 +1324,22 @@ addPaymentSchedule=async (quotationId,value)=>{
                   {t("Attn To")}
                 </label>
                 <div className="input-group-normal">
-                {!contactPerson.length>0?
-                  <NormalInput
-                  placeholder="Enter here"
-                  disabled={disableEdit}
-                  value={attnTo}
-                  name="attnTo"
-                  onChange={this.handleChange}
-                  />:<NormalSelect
-                  options={contactPerson.map(x=>{return{id:x.name,value:x.name,label:x.name}})}
-                  disabled={disableEdit}
-                  value={attnTo}
-                  name="attnTo"
-                  onChange={(event)=>{let formFields=this.state.formFields; formFields.attnTo=event.target.value;this.setState({formFields})}}
-                />
-                
-                }
+                  {!contactPerson.length > 0 ?
+                    <NormalInput
+                      placeholder="Enter here"
+                      disabled={disableEdit}
+                      value={attnTo}
+                      name="attnTo"
+                      onChange={this.handleChange}
+                    /> : <NormalSelect
+                      options={contactPerson.map(x => { return { id: x.name, value: x.name, label: x.name } })}
+                      disabled={disableEdit}
+                      value={attnTo}
+                      name="attnTo"
+                      onChange={(event) => { let formFields = this.state.formFields; formFields.attnTo = event.target.value; this.setState({ formFields }) }}
+                    />
+
+                  }
                 </div>
                 <div>
                   {this.validator.message(t("Attn To"), attnTo, t("required"))}
@@ -1361,7 +1365,7 @@ addPaymentSchedule=async (quotationId,value)=>{
                 <label className="text-left text-black common-label-text fs-17 pt-3">
                   {t("Currency")}
                 </label>
-                <div className="input-group-normal">                  
+                <div className="input-group-normal">
                   <NormalSelect
                     disabled={disableEdit}
                     options={currencyOption}
@@ -1443,63 +1447,62 @@ addPaymentSchedule=async (quotationId,value)=>{
                   />
                 </div>
               </div>
-              <div className="col-md-2 col-12"> 
-              <label className="text-left text-black common-label-text fs-17 pt-3">
-                 &nbsp;
-                </label>              
+              <div className="col-md-2 col-12">
+                <label className="text-left text-black common-label-text fs-17 pt-3">
+                  &nbsp;
+                </label>
                 <div className="input-group">
-                <NormalButton
-                  buttonClass={"mx-2"}
-                  mainbg={true}
-                  className="confirm"
-                  label="Add"
-                  onClick={() => 
-                  {
-                    if (paymentSchedule.trim().length > 0 && paymentTerms.trim().length > 0) {
-                      let value = { paymentSchedule: paymentSchedule, paymentTerms: paymentTerms, id: 0 };
-                      if (this.props.match.params.id) {
-                        this.addPaymentSchedule(this.props.match.params.id, value).then(res => {
-                          value.id = res.data.id;
+                  <NormalButton
+                    buttonClass={"mx-2"}
+                    mainbg={true}
+                    className="confirm"
+                    label="Add"
+                    onClick={() => {
+                      if (paymentSchedule.trim().length > 0 && paymentTerms.trim().length > 0) {
+                        let value = { paymentSchedule: paymentSchedule, paymentTerms: paymentTerms, id: 0 };
+                        if (this.props.match.params.id) {
+                          this.addPaymentSchedule(this.props.match.params.id, value).then(res => {
+                            value.id = res.data.id;
+                            this.addPaymentScheduleToList(value);
+                          })
+
+                        } else {
                           this.addPaymentScheduleToList(value);
-                        })
+                        }
 
-                      } else {
-                        this.addPaymentScheduleToList(value);
+
                       }
-
-
                     }
-                  }
                     }
                   />
-                  
+
                 </div>
               </div>
             </div>
             <div className="row">
-              <div className="col-md-10 col-12" style={{"marginLeft": "-1rem"}}>
-            {this.state.paymentScheduleAndTerms.length>0 ? <table className="table">
-                          <thead>
-                            <tr>
-                              <th className="first-value"></th>
-                              <th>Payment Schedule</th>
-                              <th>Payment Terms</th>                              
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {this.state.paymentScheduleAndTerms.map((e, index) => {
-                              return(
-                              <tr key={index}>
-                                <td> <img onClick={()=>{let {paymentScheduleAndTerms}= this.state;paymentScheduleAndTerms.splice(index,1);this.setState({paymentScheduleAndTerms}); if(this.props.match.params.id)this.props.removePaymentSchedule(`${e.id}/`)}} className="close" src={closeIcon} alt="" /> </td>
-                                <td>{e.paymentSchedule}</td>
-                                <td>{e.paymentTerms}</td>
-                              </tr>)
-                            })}
+              <div className="col-md-10 col-12" style={{ "marginLeft": "-1rem" }}>
+                {this.state.paymentScheduleAndTerms.length > 0 ? <table className="table">
+                  <thead>
+                    <tr>
+                      <th className="first-value"></th>
+                      <th>Payment Schedule</th>
+                      <th>Payment Terms</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {this.state.paymentScheduleAndTerms.map((e, index) => {
+                      return (
+                        <tr key={index}>
+                          <td> <img onClick={() => { let { paymentScheduleAndTerms } = this.state; paymentScheduleAndTerms.splice(index, 1); this.setState({ paymentScheduleAndTerms }); if (this.props.match.params.id) this.props.removePaymentSchedule(`${e.id}/`) }} className="close" src={closeIcon} alt="" /> </td>
+                          <td>{e.paymentSchedule}</td>
+                          <td>{e.paymentTerms}</td>
+                        </tr>)
+                    })}
 
-                          </tbody>
-                        </table>:""
-                      }
-                      </div>
+                  </tbody>
+                </table> : ""
+                }
+              </div>
             </div>
             <div className="col-md-12 quotation-content">
               <div className="tab-menus">
@@ -1508,9 +1511,8 @@ addPaymentSchedule=async (quotationId,value)=>{
                     <li key={index}>
                       <NavLink to={to} className="nav-link">
                         <div
-                          className={`sidebar-menu ${
-                            currentValue === index ? "active" : ""
-                          }`}
+                          className={`sidebar-menu ${currentValue === index ? "active" : ""
+                            }`}
                           onClick={() =>
                             this.handleClick({ key: index, id: id })
                           }
@@ -1568,90 +1570,94 @@ addPaymentSchedule=async (quotationId,value)=>{
                 />
               </div>
 
-              {!disableEdit?
-              <>
-              <div className="col-md-2 col-12 mt-3">
-              <NormalButton
-                  disabled={this.state.storedItemListStored.length<1}
-                  buttonClass={"mx-2"}
-                  mainbg={true}
-                  className="confirm"
-                  label="Save"
-                  onClick={() => this.handleSubmit()}
-                />
-              </div>
-              <div className="col-md-2 col-12 mt-3">
-                <NormalButton
-                  buttonClass={"mx-2 mb-3"}
-                  mainbg={true}
-                  className="confirm"
-                  label="Post"
-                  outline={false}
-                  onClick={() => this.handleSubmit(status)}
-                />
-              </div></>
-              :''}
-              
+              {!disableEdit ?
+                <>
+                  <div className="col-md-2 col-12 mt-3">
+                    <NormalButton
+                      disabled={this.state.storedItemListStored.length < 1}
+                      buttonClass={"mx-2"}
+                      mainbg={true}
+                      className="confirm"
+                      label="Save"
+                      onClick={() => this.handleSubmit()}
+                    />
+                  </div>
+                  <div className="col-md-2 col-12 mt-3">
+                    <NormalButton
+                      buttonClass={"mx-2 mb-3"}
+                      mainbg={true}
+                      className="confirm"
+                      label="Post"
+                      outline={false}
+                      onClick={() => this.handleSubmit(status)}
+                    />
+                  </div></>
+                : ''}
+
 
 
               {disableEdit == true && this.props.match.params.id ? (<>
                 <div className="col-md-2 col-12 mt-3">
-              <NormalButton
-                  buttonClass={"mx-2"}
-                  mainbg={true}
-                  className="confirm"
-                  label="Print"
-                  onClick={ () => {this.props.history.push({
-                    pathname: `/admin/quantum/quotation/print/${this.props.match.params.id}`,
-                  
-                  })}}
-                />
-              </div>
-              
+                  <NormalButton
+                    buttonClass={"mx-2"}
+                    mainbg={true}
+                    className="confirm"
+                    label="Print"
+                    onClick={() => {
+                      this.props.history.push({
+                        pathname: `/admin/quantum/quotation/print/${this.props.match.params.id}`,
+
+                      })
+                    }}
+                  />
+                </div>
+
                 <div className="col-md-4 col-12 mt-3">
                   <NormalButton
                     buttonClass={"mx-2"}
                     mainbg={true}
                     className="confirm"
                     label="Create New Revision"
-                    onClick={async () =>{                      
-                          await this.props
-                         .commonCreateApi(`quotationnewrevision/`, {
-                           quotation_id: this.props.match.params.id,
-                         });
-                         history.push(`/admin/quantum`)
-                    
+                    onClick={async () => {
+                      await this.props
+                        .commonCreateApi(`quotationnewrevision/`, {
+                          quotation_id: this.props.match.params.id,
+                        });
+                      history.push(`/admin/quantum`)
+
                     }}
                   />
                 </div>
-              <div className="col-md-2 col-12 mt-3">
-                <NormalButton
-                  buttonClass={"mx-2 mb-3"}
-                  mainbg={true}
-                  className="confirm"
-                  label="Add to Cart"
-                  outline={false}
-                  onClick={() => {
-                    this.props
-                      .commonCreateApi(`quotationtocart/`, {
-                        quotation_id: this.props.match.params.id,
-                      })
-                      .then((resCreateAddr) => {
-                        console.log("add to cart quotaion", resCreateAddr);
-                        if (resCreateAddr.status == 201) {
-                          this.props.history.push({
-                            pathname: "/admin/cart",
-                            state: {
-                              customer_id: resCreateAddr.customer_id,
-                              data: resCreateAddr.data,
-                            },
-                          });
-                        }
-                      })
-                      .catch((e) => console.log(e));
-                  }}
-                />
-              </div>
+                <div className="col-md-2 col-12 mt-3">
+                  <NormalButton
+                    buttonClass={"mx-2 mb-3"}
+                    mainbg={true}
+                    className="confirm"
+                    label="Add to Cart"
+                    outline={false}
+                    onClick={() => {
+                       this.props
+                        .commonCreateApi(`quotationtocart/`, {
+                          quotation_id: this.props.match.params.id,
+                        })
+                        .then((resCreateAddr) => {
+                          console.log("add to cart quotaion", resCreateAddr);
+                          if (resCreateAddr.status == 201) {
+                            this.props.history.push({
+                              id: resCreateAddr.customer_id,
+                              pathname: "/admin/cart",
+                              state: {
+                                customer_id: resCreateAddr.customer_id,
+                                data: resCreateAddr.data,
+                                id: resCreateAddr.customer_id,
+                              },
+                            });
+                          }
+                        })
+                        .catch((e) => console.log(e));
+                    }}
+                  />
+                </div>
               </>) : null}
 
 

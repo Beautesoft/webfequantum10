@@ -9,6 +9,7 @@ import {
   NormalDate,
   TableWrapper,
   InputSearch,
+  NormalTextarea,
 } from "component/common";
 import { dateFormat } from "service/helperFunctions";
 import { withTranslation } from "react-i18next";
@@ -36,6 +37,8 @@ export class DetailsClass extends React.Component {
       { label: "Item Code" },
       { label: "Item Description" },
       { label: "Remarks" },
+      { label: "" },
+      { label: "" },
       { label: "Quantity" },
       { label: "Unit Price" },
       { label: "Discount Amt" },
@@ -48,7 +51,7 @@ export class DetailsClass extends React.Component {
       q_discount: "",
       q_taxes: "",
       q_total: "",
-      q_discpercent:""
+      q_discpercent: ""
 
     },
 
@@ -279,18 +282,18 @@ export class DetailsClass extends React.Component {
   handleChangeDetails = ({ target: { value, name } }) => {
     let { storedItemList } = this.state;
     let formFields = Object.assign({}, this.state.formFields);
-if(name==="q_discpercent"){
-  formFields[name] = value;
-  formFields['q_discount']=''
-}else if(name==="q_discount"){
-  formFields[name] = value;
-  formFields['q_discpercent']='';
-}
-else{
-  formFields[name] = value;
+    if (name === "q_discpercent") {
+      formFields[name] = value;
+      formFields['q_discount'] = ''
+    } else if (name === "q_discount") {
+      formFields[name] = value;
+      formFields['q_discpercent'] = '';
+    }
+    else {
+      formFields[name] = value;
 
-}
-    
+    }
+
     this.setState(
       {
         formFields,
@@ -358,8 +361,8 @@ else{
         item_remarks: "",
         item_price: item_price,
         item_quantity: item_quantity,
-        discount_percent:0,
-        discount_amt:0,
+        discount_percent: 0,
+        discount_amt: 0,
         editing: false,
       });
     } else {
@@ -370,8 +373,8 @@ else{
         item_remarks: "",
         item_price: item_price,
         item_quantity: item_quantity,
-        discount_percent:0,
-        discount_amt:0,
+        discount_percent: 0,
+        discount_amt: 0,
         editing: false,
       });
     }
@@ -512,7 +515,7 @@ else{
   };
 
 
-  handleEditChangediscountAmount=  ({ target: { value, name } }) => {
+  handleEditChangediscountAmount = ({ target: { value, name } }) => {
     let { storedItemList } = this.state;
 
     for (let list in storedItemList) {
@@ -529,14 +532,14 @@ else{
     console.log("storedItemList in handleEditChange", storedItemList);
   };
 
-  
-  handleEditChangediscountPercent=  ({ target: { value, name } }) => {
+
+  handleEditChangediscountPercent = ({ target: { value, name } }) => {
     let { storedItemList } = this.state;
 
     for (let list in storedItemList) {
       if (storedItemList[list].item_code == name) {
         storedItemList[list].discount_percent = value;
-        storedItemList[list].discount_amt= Number((storedItemList[list].item_price*value)/100)
+        storedItemList[list].discount_amt = Number((storedItemList[list].item_price * value) / 100)
       }
       // console.log("storedItemList[list].item_code",storedItemList[list].item_code)
     }
@@ -573,7 +576,7 @@ else{
       let total = 0;
       for (let item of storedItemList) {
         costPrice =
-          parseFloat(item.item_price-item.discount_amt) * parseFloat(item.item_quantity) +
+          parseFloat(item.item_price - item.discount_amt) * parseFloat(item.item_quantity) +
           costPrice;
         // console.log("item.item_price",item.item_price,typeof item.item_price)
         // console.log("item.item_quantity",item.item_quantity,typeof item.item_quantity)
@@ -587,12 +590,12 @@ else{
         typeof formFields.q_shipcost
       );
       console.log("costPrice", costPrice);
-      let dis=Number(formFields.q_discpercent);
-      if(dis>0){
-        dis=((costPrice*Number(formFields.q_discpercent))/100);
-        formFields.q_discount=dis
+      let dis = Number(formFields.q_discpercent);
+      if (dis > 0) {
+        dis = ((costPrice * Number(formFields.q_discpercent)) / 100);
+        formFields.q_discount = dis
       }
-      
+
       subTotal =
         costPrice -
         (formFields.q_discount ? parseFloat(formFields.q_discount) : 0) +
@@ -628,7 +631,7 @@ else{
       formFields,
     } = this.state;
 
-    let { q_shipcost, q_discount, q_taxes, q_total ,q_discpercent } = formFields;
+    let { q_shipcost, q_discount, q_taxes, q_total, q_discpercent } = formFields;
 
     let { t } = this.props;
 
@@ -742,14 +745,18 @@ else{
             ) : null}
           </TableWrapper>
 
-          <div className="row mt-5"></div>
-          <TableWrapper
-            headerDetails={headerSelectedDetails}
-            // queryHandler={this.handlePagination}
-            // pageMeta={pageMeta}
-          >
-            {storedItemList
-              ? storedItemList.map((item, index) => {
+          <div className="row mt-5" ></div>
+          <div className="table">
+            <table className="tableForQuotation">
+              <th>Item Code</th>
+              <th>Item Description</th>
+              <th width="30%">Remarks</th>
+              <th>Quantity</th>
+              <th>Unit Price</th>
+              <th>Discount Amt</th>
+              <th>Discount(%)</th>
+              {storedItemList
+                ? storedItemList.map((item, index) => {
                   let {
                     item_code,
                     item_desc,
@@ -845,7 +852,8 @@ else{
                       </td>
                       <td>
                         <div className="d-flex align-items-center justify-content-center">
-                          <NormalInput
+                          <NormalTextarea
+                            rows="10"
                             value={item_remarks}
                             disabled={this.props.disableEdit}
                             name={item_code}
@@ -854,7 +862,7 @@ else{
                         </div>
                       </td>
                       <td>
-                      <div className="d-flex align-items-center justify-content-center">
+                        <div className="d-flex align-items-center justify-content-center">
                           <NormalInput
                             value={item_quantity}
                             disabled={this.props.disableEdit}
@@ -862,39 +870,39 @@ else{
                             onChange={this.handleEditChangeQuantity}
                           />
                         </div>
-                        
+
                       </td>
                       <td>
-                      <div className="d-flex align-items-center justify-content-center">
+                        <div className="d-flex align-items-center justify-content-center">
                           <NormalInput
                             value={item_price}
                             disabled={this.props.disableEdit}
                             name={item_code}
                             onChange={this.handleEditChangePrice}
                           />
-                        </div> 
+                        </div>
                       </td>
                       <td><div className="input-group">
-                  <NormalInput
-                    placeholder=""
-                    value={discount_amt}
-                    type="number"
-                    name={item_code}
-                    onChange={this.handleEditChangediscountAmount}
-                  /></div>
-                  </td>
-                      
+                        <NormalInput
+                          placeholder=""
+                          value={discount_amt}
+                          type="number"
+                          name={item_code}
+                          onChange={this.handleEditChangediscountAmount}
+                        /></div>
+                      </td>
+
                       <td>
-                      <div className="input-group">
-                      <NormalInput
-                    placeholder=""
-                    value={discount_percent}
-                    type="number"
-                    name={item_code}
-                    onChange={this.handleEditChangediscountPercent}
-                  />
-                  </div>
-                  </td>
+                        <div className="input-group">
+                          <NormalInput
+                            placeholder=""
+                            value={discount_percent}
+                            type="number"
+                            name={item_code}
+                            onChange={this.handleEditChangediscountPercent}
+                          />
+                        </div>
+                      </td>
                       {/* <td>
                               <div className="d-flex align-items-center justify-content-center">
                                 <img
@@ -926,8 +934,9 @@ else{
                     </tr>
                   );
                 })
-              : null}
-          </TableWrapper>
+                : null}
+            </table>
+          </div>
 
           <div className="row justify-content-end mt-5">
             <div className="col-4">
@@ -985,7 +994,7 @@ else{
                     disabled={true}
                     value={q_taxes}
                     name="q_taxes"
-                    // onChange={this.handleChangeDetails}
+                  // onChange={this.handleChangeDetails}
                   />
                 </div>
               </div>
@@ -1000,7 +1009,7 @@ else{
                     disabled={true}
                     value={q_total}
                     name="q_total"
-                    // onChange={this.handleChangeDetails}
+                  // onChange={this.handleChangeDetails}
                   />
                 </div>
               </div>

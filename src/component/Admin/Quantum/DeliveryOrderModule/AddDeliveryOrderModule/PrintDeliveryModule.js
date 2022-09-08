@@ -96,7 +96,7 @@ export class PrintDeliverModuleClass extends Component {
         // `receiptpdfsendsms/?sa_transacno=${this.props.match.params.id}`
         `receiptpdfsendsms/?sa_transacno=THS0110000612`
       )
-      .then((res) => {});
+      .then((res) => { });
   };
   //   handleChangePayment = () => {
   //     this.setState({ isOpenPayment: true });
@@ -222,13 +222,13 @@ export class PrintDeliverModuleClass extends Component {
                 <div className="row ">
                   <div className="col-6">
                     <div className="row">
-                      <div className="col-3 f-600">Invoice No.</div>
+                      <div className="col-3 f-600">Delivery Order  No.</div>
                       <div className="col-9">
                         : {this.state.responseData[0]?.deliveryorder.do_number}
                       </div>
                     </div>
                     <div className="row">
-                      <div className="col-3  f-600">Invoice Date</div>
+                      <div className="col-3  f-600">Delivery Order Date</div>
                       <div className="col-9">
                         : {this.state.responseData[0]?.deliveryorder.created_at}
                       </div>
@@ -247,20 +247,8 @@ export class PrintDeliverModuleClass extends Component {
                         : {this.state.responseData[0]?.deliveryorder.title}
                       </div>
                     </div>
-                    <div className="row">
-                      <div className="col-3  f-600">Validity</div>
-                      <div className="col-9">
-                        : {this.state.responseData[0]?.deliveryorder.validity}
-                      </div>
-                    </div>
                   </div>
                   <div className="col-6">
-                    <div className="row">
-                      <div className="col-3  f-600">Terms</div>
-                      <div className="col-9">
-                        : {this.state.responseData[0]?.deliveryorder.terms}
-                      </div>
-                    </div>
                     <div className="row">
                       <div className="col-3  f-600">Company Name</div>
                       <div className="col-9">
@@ -290,28 +278,22 @@ export class PrintDeliverModuleClass extends Component {
               </div>
               <div className="bill-detail mt-4 py-1">
                 <div className="row m-0 table-header  f-600">
-                  <div className="col-2">Code</div>
+                  <div className="col-4">Code</div>
                   <div className="col-4 text-left">Description</div>
-                  <div className="col-2 text-right">Quantity</div>
-                  <div className="col-2 text-right">Unit Price</div>
-                  <div className="col-2 text-right">Amount.</div>
+                  <div className="col-4 text-right">Quantity</div>
                 </div>
                 {this.state.responseData[0]?.deliveryitem.map((item, index) => {
                   return (
                     <div className="row m-0 mt-2" key={index}>
-                      <div className="col-2">{item.quotation_itemcode}</div>
+                      <div className="col-4">{item.quotation_itemcode}</div>
                       <div className="col-4 text-left">
-                        {item.quotation_itemdesc}
+                        <p>{item.quotation_itemdesc}
+                          <br />
+                          {item.quotation_itemremarks}</p>
                       </div>
                       {/* <div className="col-2 text-right">{item.quotation_itemdesc}</div> */}
-                      <div className="col-2 text-right">
+                      <div className="col-4 text-right">
                         {item.quotation_quantity}
-                      </div>
-                      <div className="col-2 text-right">
-                        {item.quotation_unitprice}
-                      </div>
-                      <div className="col-2 text-right">
-                        {item.quotation_unitprice * item.quotation_quantity}
                       </div>
                     </div>
                   );
@@ -356,33 +338,7 @@ export class PrintDeliverModuleClass extends Component {
                       <div className="col-4 text-right">{taud_sub.total}</div>
                     </div>
                   </div> */}
-                  <div className="col-5 text-right">
-                    <div className="row">
-                      <div className="col-6">Shipping Cost :</div>
-                      <div className="col-6 text-right">
-                        {this.state.responseData[0]?.deliverydtl.q_shipcost}
-                      </div>
-                    </div>
-                    <div className="row">
-                      <div className="col-6">Discount :</div>
-                      <div className="col-6 text-right">
-                        {" "}
-                        {this.state.responseData[0]?.deliverydtl.q_discount}
-                      </div>
-                    </div>
-                    <div className="row">
-                      <div className="col-6">Taxes :</div>
-                      <div className="col-6 text-right">
-                        {this.state.responseData[0]?.deliverydtl.q_taxes}
-                      </div>
-                    </div>
-                    <div className="row">
-                      <div className="col-6"> Total :</div>
-                      <div className="col-6 text-right">
-                        {this.state.responseData[0]?.deliverydtl.q_total}
-                      </div>
-                    </div>
-                  </div>
+
                 </div>
                 {/* used payment list */}
               </div>
@@ -413,7 +369,7 @@ export class PrintDeliverModuleClass extends Component {
                         }
                       />
                     )}
-                    <br/>
+                    <br />
                     Customer Signature
                   </div>
                 </div>
