@@ -142,7 +142,7 @@ export class Invoice extends React.Component {
           {Flag == 9 && (
             <Fragment>
               <ManualInvoiceSecondaryInfo
-                accountHeader={TableList.deliverydtl}
+                accountHeader={TableList.deliveryorder}
               ></ManualInvoiceSecondaryInfo>
               <View style={styles.footerContainer}>
                 <Text>{TableList.deliveryorder["footer"]}</Text>

@@ -71,28 +71,6 @@ export class ManualInvoiceSecondaryInfo extends React.Component {
           <Text style={styles.label}> </Text>
           <Text style={styles.leftvalue}>{accountHeader.remarks}</Text>
         </View>
-        <View style={styles.headerText}>
-          <View style={styles.invoiceNoContainer}>
-            <Text style={styles.rightlabel}>Shipping Cost</Text>
-            <Text style={styles.label}> </Text>
-            <Text style={styles.rightvalue}>{accountHeader.q_shipcost}</Text>
-          </View>
-          <View style={styles.invoiceNoContainer}>
-            <Text style={styles.rightlabel}>Discount</Text>
-            <Text style={styles.label}> </Text>
-            <Text style={styles.rightvalue}>{accountHeader.q_discount}</Text>
-          </View>
-          <View style={styles.invoiceNoContainer}>
-            <Text style={styles.rightlabel}>Taxes</Text>
-            <Text style={styles.label}> </Text>
-            <Text style={styles.rightvalue}>{accountHeader.q_taxes}</Text>
-          </View>
-          <View style={styles.invoiceNoContainer}>
-            <Text style={styles.rightlabel}>Total</Text>
-            <Text style={styles.label}> </Text>
-            <Text style={styles.rightvalue}>{accountHeader.q_total}</Text>
-          </View>
-        </View>
       </View>
     );
   }

@@ -204,19 +204,21 @@ export class DetailsClass extends React.Component {
   };
 
   searchAllInvoice = async () => {
-    let { invoice } = this.state;
-    await this.setState({ allInvoicesData: [] });
-    this.props
-      .getCommonApi(
-        `transactioninvoices/?custid=&search=${invoice}`
-      )
-      .then((res) => {
-        console.log("res in transaction history", res);
-        if (res.status == 200) {
-          this.setState({ allInvoicesData: res.data });
-        }
-      });
 
+    await this.setState({ allInvoicesData: [] });
+    setTimeout(() => {
+      let { invoice } = this.state;
+      this.props
+        .getCommonApi(
+          `transactioninvoices/?custid=&search=${invoice}`
+        )
+        .then((res) => {
+          console.log("res in transaction history", res);
+          if (res.status == 200) {
+            this.setState({ allInvoicesData: res.data });
+          }
+        });
+    }, 1000);
   };
 
   getDetails = () => {
@@ -662,7 +664,7 @@ export class DetailsClass extends React.Component {
           return {
             item_disc: data.item_desc,
             item_code: data.item_code,
-            remarks: "",
+            remarks: data.remarks,
             quantity: data.dt_qty,
             unit_price: data.dt_price,
           };
@@ -925,155 +927,155 @@ export class DetailsClass extends React.Component {
               <th>Unit Price</th>
               <th>Discount Amt</th>
               <th>Discount(%)</th>
-            {storedItemList
-              ? storedItemList.map((item, index) => {
-                let {
-                  item_code,
-                  item_desc,
-                  item_remarks,
-                  item_price,
-                  item_quantity,
-                  editing,
-                  discount_amt,
-                  discount_percent
-                } = item;
-                return editing == false ? (
-                  <tr key={index}>
-                    <td>
-                      <div className="d-flex align-items-start justify-content-start">
-                        {item_code}
-                      </div>
-                    </td>
-                    <td>
-                      <div className="d-flex align-items-start justify-content-start">
-                        {item_desc}
-                      </div>
-                    </td>
-                    <td>
-                      <div className="d-flex align-items-start justify-content-start">
-                        {item_remarks}
-                      </div>
-                    </td>
-                    <td>
-                      <div className="d-flex align-items-end justify-content-end">
-                        {item_quantity}
-                      </div>
-                    </td>
-                    <td>
-                      <div className="d-flex align-items-end justify-content-end">
-                        {item_price}
-                      </div>
-                    </td>
-                    <td>
-                      <div className="d-flex align-items-end justify-content-end">
-                        {discount_amt}
-                      </div>
-                    </td>
-                    <td>
-                      <div className="d-flex align-items-end justify-content-end">
-                        {discount_percent
-                        }
-                      </div>
-                    </td>
-                    <td>
-                      <div className="d-flex align-items-center justify-content-center">
-                        <img
-                          src={updateBtn}
-                          width="35"
-                          height="35"
-                          alt=""
-                          className="action-img bg-transparent"
-                          onClick={
-                            this.props.disableEdit == false
-                              ? () => this.handleEdit(item_code)
-                              : ""
+              {storedItemList
+                ? storedItemList.map((item, index) => {
+                  let {
+                    item_code,
+                    item_desc,
+                    item_remarks,
+                    item_price,
+                    item_quantity,
+                    editing,
+                    discount_amt,
+                    discount_percent
+                  } = item;
+                  return editing == false ? (
+                    <tr key={index}>
+                      <td>
+                        <div className="d-flex align-items-start justify-content-start">
+                          {item_code}
+                        </div>
+                      </td>
+                      <td>
+                        <div className="d-flex align-items-start justify-content-start">
+                          {item_desc}
+                        </div>
+                      </td>
+                      <td>
+                        <div className="d-flex align-items-start justify-content-start">
+                          {item_remarks}
+                        </div>
+                      </td>
+                      <td>
+                        <div className="d-flex align-items-end justify-content-end">
+                          {item_quantity}
+                        </div>
+                      </td>
+                      <td>
+                        <div className="d-flex align-items-end justify-content-end">
+                          {item_price}
+                        </div>
+                      </td>
+                      <td>
+                        <div className="d-flex align-items-end justify-content-end">
+                          {discount_amt}
+                        </div>
+                      </td>
+                      <td>
+                        <div className="d-flex align-items-end justify-content-end">
+                          {discount_percent
                           }
-                        />
-                      </div>
-                    </td>
-                    <td>
-                      <div className="d-flex align-items-center justify-content-center">
-                        <img
-                          src={deleteBtn}
-                          width="35"
-                          height="35"
-                          alt=""
-                          className="action-img bg-transparent "
-                          onClick={
-                            this.props.disableEdit == false
-                              ? () => this.handleRemoveStoredItem(item_code)
-                              : ""
-                          }
-                        />
-                      </div>
-                    </td>
-                  </tr>
-                ) : (
-                  <tr key={index}>
-                    <td>
-                      <div className="d-flex align-items-center justify-content-center">
-                        {item_code}
-                      </div>
-                    </td>
-                    <td>
-                      <div className="d-flex align-items-center justify-content-center">
-                        {item_desc}
-                      </div>
-                    </td>
-                    <td>
-                      <div className="d-flex align-items-center justify-content-center">
-                        <NormalTextarea
-                          value={item_remarks}
-                          rows="10"
-                          disabled={this.props.disableEdit}
-                          name={item_code}
-                          onChange={this.handleEditChangeRemarks}
-                        />
-                      </div>
-                    </td>
-                    <td>
-                      <div className="d-flex align-items-center justify-content-center">
-                        <NormalInput
-                          value={item_quantity}
-                          disabled={this.props.disableEdit}
-                          name={item_code}
-                          onChange={this.handleEditChangeQuantity}
-                        />
-                      </div>
-                    </td>
-                    <td>
-                      <div className="d-flex align-items-center justify-content-center">
-                        <NormalInput
-                          value={item_price}
-                          disabled={this.props.disableEdit}
-                          name={item_code}
-                          onChange={this.handleEditChangePrice}
-                        />
-                      </div>
-                    </td>
+                        </div>
+                      </td>
+                      <td>
+                        <div className="d-flex align-items-center justify-content-center">
+                          <img
+                            src={updateBtn}
+                            width="35"
+                            height="35"
+                            alt=""
+                            className="action-img bg-transparent"
+                            onClick={
+                              this.props.disableEdit == false
+                                ? () => this.handleEdit(item_code)
+                                : ""
+                            }
+                          />
+                        </div>
+                      </td>
+                      <td>
+                        <div className="d-flex align-items-center justify-content-center">
+                          <img
+                            src={deleteBtn}
+                            width="35"
+                            height="35"
+                            alt=""
+                            className="action-img bg-transparent "
+                            onClick={
+                              this.props.disableEdit == false
+                                ? () => this.handleRemoveStoredItem(item_code)
+                                : ""
+                            }
+                          />
+                        </div>
+                      </td>
+                    </tr>
+                  ) : (
+                    <tr key={index}>
+                      <td>
+                        <div className="d-flex align-items-center justify-content-center">
+                          {item_code}
+                        </div>
+                      </td>
+                      <td>
+                        <div className="d-flex align-items-center justify-content-center">
+                          {item_desc}
+                        </div>
+                      </td>
+                      <td>
+                        <div className="d-flex align-items-center justify-content-center">
+                          <NormalTextarea
+                            value={item_remarks}
+                            rows="10"
+                            disabled={this.props.disableEdit}
+                            name={item_code}
+                            onChange={this.handleEditChangeRemarks}
+                          />
+                        </div>
+                      </td>
+                      <td>
+                        <div className="d-flex align-items-center justify-content-center">
+                          <NormalInput
+                            value={item_quantity}
+                            disabled={this.props.disableEdit}
+                            name={item_code}
+                            onChange={this.handleEditChangeQuantity}
+                          />
+                        </div>
+                      </td>
+                      <td>
+                        <div className="d-flex align-items-center justify-content-center">
+                          <NormalInput
+                            value={item_price}
+                            disabled={this.props.disableEdit}
+                            name={item_code}
+                            onChange={this.handleEditChangePrice}
+                          />
+                        </div>
+                      </td>
 
-                    <td><div className="input-group">
-                      <NormalInput
-                        placeholder=""
-                        value={discount_amt}
-                        type="number"
-                        name={item_code}
-                        onChange={this.handleEditChangediscountAmount}
-                      /></div>
-                    </td>
-
-                    <td>
-                      <div className="input-group">
+                      <td><div className="input-group">
                         <NormalInput
                           placeholder=""
-                          value={discount_percent}
+                          value={discount_amt}
                           type="number"
                           name={item_code}
-                          onChange={this.handleEditChangediscountPercent}
-                        />
-                      </div>
-                    </td>
-                    {/* <td>
+                          onChange={this.handleEditChangediscountAmount}
+                        /></div>
+                      </td>
+
+                      <td>
+                        <div className="input-group">
+                          <NormalInput
+                            placeholder=""
+                            value={discount_percent}
+                            type="number"
+                            name={item_code}
+                            onChange={this.handleEditChangediscountPercent}
+                          />
+                        </div>
+                      </td>
+                      {/* <td>
                               <div className="d-flex align-items-center justify-content-center">
                                 <img
                                   src={closeBtn}
@@ -1085,27 +1087,27 @@ export class DetailsClass extends React.Component {
                                 />
                               </div>
                             </td> */}
-                    <td>
-                      <div className="d-flex align-items-center justify-content-center">
-                        <img
-                          src={saveBtn}
-                          width="35"
-                          height="35"
-                          alt=""
-                          className="action-img bg-transparent "
-                          onClick={
-                            this.props.disableEdit == false
-                              ? () => this.handleSave(item_code)
-                              : ""
-                          }
-                        />
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })
-              : null}
-          </table>
+                      <td>
+                        <div className="d-flex align-items-center justify-content-center">
+                          <img
+                            src={saveBtn}
+                            width="35"
+                            height="35"
+                            alt=""
+                            className="action-img bg-transparent "
+                            onClick={
+                              this.props.disableEdit == false
+                                ? () => this.handleSave(item_code)
+                                : ""
+                            }
+                          />
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
+                : null}
+            </table>
           </div>
 
           <div className="row justify-content-end mt-5">

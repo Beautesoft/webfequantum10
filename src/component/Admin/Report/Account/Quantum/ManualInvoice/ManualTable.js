@@ -57,10 +57,6 @@ export class ManualTable extends React.Component {
         <Text style={styles.payment}>{item.quotation_itemcode}</Text>
         <Text style={styles.description}>{item.quotation_itemdesc}</Text>
         <Text style={styles.type}>{item.quotation_quantity}</Text>
-        <Text style={styles.type}>{item.quotation_unitprice}</Text>
-        <Text style={styles.type}>
-          {Number(item.quotation_quantity) * Number(item.quotation_unitprice)}
-        </Text>
       </View>
     ));
   }

@@ -350,7 +350,8 @@ export class DetailsClass extends React.Component {
     // this.setState({ current_item_quantity })
   };
 
-  handleSelect = (item_code, item_desc, item_price, item_quantity) => {
+  handleSelect = (item_code, item_desc, item_price, 
+    item_quantity,item_remarks) => {
     let { storedItemList, detailsList, formFields } = this.state;
     for (let item of storedItemList) {
       if (item.item_code == item_code) {
@@ -369,7 +370,7 @@ export class DetailsClass extends React.Component {
       storedItemList.push({
         item_code: item_code,
         item_desc: item_desc,
-        item_remarks: "",
+        item_remarks: item_remarks,
         item_price: item_price,
         item_quantity: item_quantity,
         editing: false,
@@ -379,7 +380,7 @@ export class DetailsClass extends React.Component {
       storedItemList.push({
         item_code: item_code,
         item_desc: item_desc,
-        item_remarks: "",
+        item_remarks: item_remarks,
         item_price: item_price,
         item_quantity: item_quantity,
         editing: false,
@@ -598,7 +599,7 @@ export class DetailsClass extends React.Component {
             return {
               item_desc: data.item_desc,
               item_code: data.item_code,
-              remarks: "",
+              remarks: data.remarks,
               quantity: data.dt_qty,
               unit_price: data.dt_price,
             };
@@ -709,7 +710,8 @@ export class DetailsClass extends React.Component {
                           item.item_code,
                           item.item_desc,
                           item.unit_price,
-                          item.quantity
+                          item.quantity,
+                          item.remarks
                         )
                       }
                     />
@@ -778,7 +780,8 @@ export class DetailsClass extends React.Component {
                               item_code,
                               item_desc,
                               item_price,
-                              item_quantity
+                              item_quantity,
+                              item.remarks
                             )
                           }
                         />

@@ -55,8 +55,6 @@ export class ManualTableHeader extends React.Component {
         <Text style={styles.payment}>{`Code`}</Text>
         <Text style={styles.description}>{`Description`}</Text>
         <Text style={styles.type}>{`Quantity`}</Text>
-        <Text style={styles.type}>{`Unit Price`}</Text>
-        <Text style={styles.type}>{`Amount`}</Text>
       </View>
     );
   }
