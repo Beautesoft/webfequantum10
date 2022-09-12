@@ -222,54 +222,54 @@ export class PrintDeliverModuleClass extends Component {
                 <div className="row ">
                   <div className="col-6">
                     <div className="row">
-                      <div className="col-3 f-600">Delivery Order  No.</div>
-                      <div className="col-9">
+                      <div className="col-5 f-600">Delivery Order  No.</div>
+                      <div className="col-7">
                         : {this.state.responseData[0]?.deliveryorder.do_number}
                       </div>
                     </div>
                     <div className="row">
-                      <div className="col-3  f-600">Delivery Order Date</div>
-                      <div className="col-9">
+                      <div className="col-5  f-600">Delivery Order Date</div>
+                      <div className="col-7">
                         : {this.state.responseData[0]?.deliveryorder.created_at}
                       </div>
                     </div>
 
                     <div className="row">
-                      <div className="col-3  f-600">Status</div>
-                      <div className="col-9">
+                      <div className="col-5  f-600">Status</div>
+                      <div className="col-7">
                         : {this.state.responseData[0]?.deliveryorder.status}
                       </div>
                     </div>
 
                     <div className="row">
-                      <div className="col-3  f-600">Project</div>
-                      <div className="col-9">
+                      <div className="col-5  f-600">Project</div>
+                      <div className="col-7">
                         : {this.state.responseData[0]?.deliveryorder.title}
                       </div>
                     </div>
                   </div>
                   <div className="col-6">
                     <div className="row">
-                      <div className="col-3  f-600">Company Name</div>
-                      <div className="col-9">
+                      <div className="col-5  f-600">Company Name</div>
+                      <div className="col-7">
                         : {this.state.responseData[0]?.deliveryorder.company}
                       </div>
                     </div>
                     <div className="row">
-                      <div className="col-3  f-600">Attn To</div>
-                      <div className="col-9">
+                      <div className="col-5  f-600">Attn To</div>
+                      <div className="col-7">
                         : {this.state.responseData[0]?.deliveryorder.footer}
                       </div>
                     </div>
                     <div className="row">
-                      <div className="col-3  f-600">Prepared By</div>
-                      <div className="col-9">
+                      <div className="col-5  f-600">Prepared By</div>
+                      <div className="col-7">
                         : {this.state.responseData[0]?.deliveryorder.in_charge}
                       </div>
                     </div>
                     <div className="row">
-                      <div className="col-3  f-600">Printed On</div>
-                      <div className="col-9">
+                      <div className="col-5  f-600">Printed On</div>
+                      <div className="col-7">
                         {new Date().toISOString().slice(0, 10)}
                       </div>
                     </div>

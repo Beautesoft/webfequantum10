@@ -62,15 +62,15 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     alignContent: "flex-start",
   },
-  imgcont:{
-    width:100,
-    height:60
+  imgcont: {
+    width: 100,
+    height: 60
   }
 });
 
 export class Invoice extends React.Component {
   render() {
-    let { accountHeader, TableList, Flag, landscape ,termsandcondition } = this.props;
+    let { accountHeader, TableList, Flag, landscape, termsandcondition } = this.props;
     console.log(accountHeader, "propsaccountheadervaluesresult");
     return (
       <Document file="somefile.pdf">
@@ -102,17 +102,17 @@ export class Invoice extends React.Component {
               accountHeader={TableList.workordinvoice}
               Flag={Flag}
             />
-          ): Flag == 9 ?(
+          ) : Flag == 9 ? (
             <ManualInvoiceMainInfo
               accountHeader={TableList.deliveryorder}
               Flag={Flag}
             />
-          ): Flag ==10 ?(
+          ) : Flag == 10 ? (
             <ManualInvoiceMainInfo
               accountHeader={TableList.quotation}
               Flag={Flag}
             />
-          ): (
+          ) : (
             <AccountDetailInfo accountHeader={accountHeader} />
           )}
 
@@ -121,7 +121,9 @@ export class Invoice extends React.Component {
           {Flag == 7 && (
             <Fragment>
               <ManualInvoiceSecondaryInfo
-                accountHeader={TableList.manualinvdtl}
+                Flag={Flag}
+                footerShippingContent={TableList.manualinvdtl}
+                accountHeader={TableList.manualinvoice}
               ></ManualInvoiceSecondaryInfo>
               <View style={styles.footerContainer}>
                 <Text>{TableList.manualinvoice["footer"]}</Text>
@@ -132,7 +134,8 @@ export class Invoice extends React.Component {
           {Flag == 8 && (
             <Fragment>
               <ManualInvoiceSecondaryInfo
-                accountHeader={TableList.workordinvdtl}
+                accountHeader={TableList.workordinvoice}
+                Flag={Flag}
               ></ManualInvoiceSecondaryInfo>
               <View style={styles.footerContainer}>
                 <Text>{TableList.workordinvoice["footer"]}</Text>
@@ -142,6 +145,7 @@ export class Invoice extends React.Component {
           {Flag == 9 && (
             <Fragment>
               <ManualInvoiceSecondaryInfo
+                Flag={Flag}
                 accountHeader={TableList.deliveryorder}
               ></ManualInvoiceSecondaryInfo>
               <View style={styles.footerContainer}>
@@ -152,52 +156,54 @@ export class Invoice extends React.Component {
           {Flag == 10 && (
             <Fragment>
               <ManualInvoiceSecondaryInfo
-                accountHeader={TableList.quotationdtl}
+                Flag={Flag}
+                accountHeader={TableList.quotation}
+                footerShippingContent={TableList.quotationdtl}
               ></ManualInvoiceSecondaryInfo>
               <View style={styles.footerContainer}>
                 <Text>{TableList.quotationdtl["footer"]}</Text>
               </View>
             </Fragment>
           )}
-          
-           {Flag == 7 && (
-            <Fragment> 
+
+          {Flag == 7 && (
+            <Fragment>
               <View style={styles.imgcont}>
-              <Image   src={this.props.signPhoto} /> 
-              <Text >Customer Signature </Text>                 
-              </View>
-            </Fragment>
-          )}
-          {Flag == 10 && (
-            <Fragment> 
-              <View style={styles.imgcont}>
-              <Image src={this.props.signPhoto} />              
-              <Text >Customer Signature </Text>            
+                <Image src={this.props.signPhoto} />
+                <Text >Customer Signature </Text>
               </View>
             </Fragment>
           )}
           {Flag == 10 && (
             <Fragment>
-             <View >
-             <Text>Terms And Condition</Text>
-             <Text>
-              {termsandcondition}
-              </Text>
+              <View style={styles.imgcont}>
+                <Image src={this.props.signPhoto} />
+                <Text >Customer Signature </Text>
               </View>
-             
+            </Fragment>
+          )}
+          {Flag == 10 && (
+            <Fragment>
+              <View >
+                <Text>Terms And Condition</Text>
+                <Text>
+                  {termsandcondition}
+                </Text>
+              </View>
+
             </Fragment>
           )}
           {Flag == 9 && (
-            <Fragment>            
+            <Fragment>
               <View style={styles.imgcont}>
-              <Image src={this.props.signPhoto} />
-              <Text >Customer Signature </Text>    
+                <Image src={this.props.signPhoto} />
+                <Text >Customer Signature </Text>
               </View>
             </Fragment>
           )}
-          
-          
-          
+
+
+
 
           <CustomerFooter />
         </Page>

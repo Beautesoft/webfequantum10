@@ -50,11 +50,14 @@ const styles = StyleSheet.create({
 
 export class ManualTableHeader extends React.Component {
   render() {
+    let { Flag } = this.props;
     return (
       <View style={styles.container} fixed>
         <Text style={styles.payment}>{`Code`}</Text>
         <Text style={styles.description}>{`Description`}</Text>
         <Text style={styles.type}>{`Quantity`}</Text>
+        {(Flag == 7 || Flag == 10) && <Text style={styles.type}>{`Unit Price`}</Text>}
+        {(Flag == 7 || Flag == 10) && <Text style={styles.type}>{`Amount`}</Text>}
       </View>
     );
   }

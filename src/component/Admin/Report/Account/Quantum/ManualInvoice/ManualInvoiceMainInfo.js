@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
     alignSelf: "flex-end",
   },
   leftlabel: {
-    width: 80,
+    width: 100,
     alignSelf: "flex-start",
     textAlign: "left",
   },
@@ -64,23 +64,35 @@ export class ManualInvoiceMainInfo extends React.Component {
     let now = new Date();
     var PrintedDate = moment(now).format("DD-MM-YYYY");
     var PrintedTime = moment(now).format("HH:MM:SS");
+    var xFormName = "Invoice";
+    var xNumber = accountHeader.manualinv_number;
+    if (Flag == 7) {
+      xNumber = accountHeader.manualinv_number;
+    }
+    if (Flag == 8) {
+      xFormName = "Work Order";
+      xNumber = accountHeader.workorderinv_number;
+    }
+    else if (Flag == 9) {
+      xFormName = "Delivery Order";
+      xNumber = accountHeader.do_number;
+    }
+    else if (Flag == 10) {
+      xFormName = "Invoice";
+      xNumber = accountHeader.quotation_number;
+    }
     return (
       <View style={styles.container}>
         <View style={styles.headerNormalText}>
           <View style={styles.invoiceNoContainer}>
-            <Text style={styles.leftlabel}>Invoice No.</Text>
+            <Text style={styles.leftlabel}>{xFormName} No.</Text>
             <Text style={styles.label}> : </Text>
             <Text style={styles.leftvalue}>
-              {Flag == 8
-                ? accountHeader.workorderinv_number
-                : accountHeader.manualinv_number}
-                {Flag == 10
-                ? accountHeader.quotation_number
-                : ""}
+              {xNumber}
             </Text>
           </View>
           <View style={styles.invoiceNoContainer}>
-            <Text style={styles.leftlabel}>Invoice Date</Text>
+            <Text style={styles.leftlabel}>{xFormName} Date</Text>
             <Text style={styles.label}> : </Text>
             <Text style={styles.leftvalue}>
               {moment(accountHeader.created_at).format("DD-MM-YYYY")}
@@ -96,18 +108,8 @@ export class ManualInvoiceMainInfo extends React.Component {
             <Text style={styles.label}> : </Text>
             <Text style={styles.leftvalue}>{accountHeader.title}</Text>
           </View>
-          <View style={styles.invoiceNoContainer}>
-            <Text style={styles.leftlabel}>Validity</Text>
-            <Text style={styles.label}> : </Text>
-            <Text style={styles.leftvalue}>{accountHeader.validity}</Text>
-          </View>
         </View>
         <View style={styles.headerText}>
-          <View style={styles.invoiceNoContainer}>
-            <Text style={styles.rightlabel}>Terms</Text>
-            <Text style={styles.label}> : </Text>
-            <Text style={styles.rightvalue}>{accountHeader.terms}</Text>
-          </View>
           <View style={styles.invoiceNoContainer}>
             <Text style={styles.rightlabel}>Company Name</Text>
             <Text style={styles.label}> : </Text>

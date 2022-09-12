@@ -13,6 +13,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   description: {
+    paddingLeft: "3px",
     width: "49%",
     borderRightColor: borderColor,
     borderRightWidth: 1,
@@ -51,12 +52,20 @@ const styles = StyleSheet.create({
 
 export class ManualTable extends React.Component {
   render() {
-    let { items } = this.props;
+    let { items, Flag } = this.props;
     return items.map((item, index) => (
       <View style={styles.row} key={index}>
         <Text style={styles.payment}>{item.quotation_itemcode}</Text>
-        <Text style={styles.description}>{item.quotation_itemdesc}</Text>
+        <Text style={styles.description}>
+          {item.quotation_itemdesc}
+          {'\n'}
+          {item.quotation_itemremarks}
+        </Text>
         <Text style={styles.type}>{item.quotation_quantity}</Text>
+        {(Flag == 7 || Flag == 10) && <Text style={styles.type}>{item.quotation_unitprice}</Text>}
+        {(Flag == 7 || Flag == 10) && <Text style={styles.type}>
+          {Number(item.quotation_quantity) * Number(item.quotation_unitprice)}
+        </Text>}
       </View>
     ));
   }

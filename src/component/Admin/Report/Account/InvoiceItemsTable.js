@@ -106,9 +106,10 @@ export class InvoiceItemsTable extends React.Component {
         ) : null}
         {Flag == 7 ? (
           <>
-            <ManualTableHeader />
+            <ManualTableHeader
+              Flag={Flag} />
             {TableList.manualinvitem && TableList.manualinvitem.length > 0 ? (
-              <ManualTable items={TableList.manualinvitem} />
+              <ManualTable items={TableList.manualinvitem} Flag={Flag} />
             ) : (
               ""
             )}
@@ -116,9 +117,10 @@ export class InvoiceItemsTable extends React.Component {
         ) : null}
         {Flag == 8 ? (
           <>
-            <ManualTableHeader />
+            <ManualTableHeader
+              Flag={Flag} />
             {TableList.workordinvitem && TableList.workordinvitem.length > 0 ? (
-              <ManualTable items={TableList.workordinvitem} />
+              <ManualTable items={TableList.workordinvitem} Flag={Flag} />
             ) : (
               ""
             )}
@@ -126,19 +128,21 @@ export class InvoiceItemsTable extends React.Component {
         ) : null}
         {Flag == 9 ? (
           <>
-            <ManualTableHeader />
+            <ManualTableHeader
+              Flag={Flag} />
             {TableList.deliveryitem && TableList.deliveryitem.length > 0 ? (
-              <ManualTable items={TableList.deliveryitem} />
+              <ManualTable items={TableList.deliveryitem} Flag={Flag} />
             ) : (
               ""
             )}
           </>
         ) : null}
-         {Flag == 10 ? (
+        {Flag == 10 ? (
           <>
-            <ManualTableHeader />
+            <ManualTableHeader
+              Flag={Flag} />
             {TableList.quotationitem && TableList.quotationitem.length > 0 ? (
-              <ManualTable items={TableList.quotationitem} />
+              <ManualTable items={TableList.quotationitem} Flag={Flag} />
             ) : (
               ""
             )}

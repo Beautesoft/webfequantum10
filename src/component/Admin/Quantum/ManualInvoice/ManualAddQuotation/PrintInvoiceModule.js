@@ -292,6 +292,12 @@ export class PrintInvoiceModuleClass extends Component {
               </div>
               <div className="invoice-footer mt-5">
                 <div className="row m-0">
+                <div className="col-9 fs-12">
+                    <p className="">
+                      Remark:{" "}
+                      {this.state.responseData[0]?.manualinvoice.remarks}
+                    </p>
+                  </div>
                 <div className="col-3 text-center p-1">
                     {this.state.signPhoto ? (
                       <img
