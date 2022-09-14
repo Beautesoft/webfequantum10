@@ -24,6 +24,7 @@ import { withTranslation } from "react-i18next";
 import { Activities } from "./activities";
 import { Quotation } from "./quotation";
 import { PO } from "./PO";
+import { DocumentUploadViewTab } from "./DocumentUploadViewTab";
 import { NavLink } from "react-router-dom";
 import { getTokenDetails } from "redux/actions/auth";
 import addBtn from "assets/images/add.png";
@@ -82,6 +83,7 @@ export class AddProjectClass extends Component {
       },
       { to: this.props.location.pathname, label: "Quotation", id: "Quotation" },
       { to: this.props.location.pathname, label: "Purchase Order", id: "PO" },
+      { to: this.props.location.pathname, label: "Document", id: "Document" },
     ],
     selectedMenu: "Activities",
     visible:false,
@@ -1000,6 +1002,13 @@ export class AddProjectClass extends Component {
                       id={this.state.selectedMenu}
                       // search={formFields.search}
                       api={"po"}
+                    />
+                  )}
+                  {this.state.selectedMenu === "Document" && (
+                    <DocumentUploadViewTab
+                      fk_id={this.props.match.params.id}
+                      cust_id={this.state.formFields.custId}
+                      api={"document"}
                     />
                   )}
                 </div>
