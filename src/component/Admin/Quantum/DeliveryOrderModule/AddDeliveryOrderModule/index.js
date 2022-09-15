@@ -1560,7 +1560,7 @@ export class AddDeliveryOrderClass extends Component {
                 />
               </div>
 
-              {disableEdit == true ? (
+              {/*disableEdit == true ? (
                 <div className="col-md-2 col-12 mt-3">
                   <NormalButton
                     buttonClass={"mx-2"}
@@ -1578,7 +1578,7 @@ export class AddDeliveryOrderClass extends Component {
                     }
                   />
                 </div>
-              ) : null}
+                  ) : null*/}
             </div>
           </div>
         </div>

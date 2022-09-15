@@ -61,10 +61,11 @@ export class QuantumMainPageClass extends Component {
                 activeItemId={currentMenu}
                 onSelect={({ itemId }) => this.handleMenuChange(itemId)}
                 items={[
+                  /*  Code Commented by Saleem : Change Request 14/Sep/2022
                   {
-                    title: t("PO"),
-                    itemId: "/",
-                  },
+                     title: t("PO"),
+                     itemId: "/",
+                   },*/
                   {
                     title: t("Quotation"),
                     itemId: "/Quotation",
@@ -81,10 +82,10 @@ export class QuantumMainPageClass extends Component {
                     title: t("Delivery Order "),
                     itemId: "/deliveryorder",
                   },
-                  {
+                  /*{
                     title: t("Equipment Order "),
                     itemId: "/equipment",
-                  },
+                  },*/
                   {
                     title: t("Terms & Condition "),
                     itemId: "/termscondition",
@@ -97,7 +98,7 @@ export class QuantumMainPageClass extends Component {
         <div className={ismenu == true ? "col-md-10 mt-3" : "col-md-12 mt-3"}>
           <div className="row">
             {currentMenu == "/" ? (
-              <ListPO />
+              <ListQuotation />
             ) : currentMenu == "/Quotation" ? (
               <ListQuotation />
             ) : currentMenu == "/manualinvoice" ? (
@@ -110,7 +111,7 @@ export class QuantumMainPageClass extends Component {
               <ListEquipment />
             ) : currentMenu == "/termscondition" ? (
               <TermsCondition />
-            ): (
+            ) : (
               <div>Loading..</div>
             )}
           </div>

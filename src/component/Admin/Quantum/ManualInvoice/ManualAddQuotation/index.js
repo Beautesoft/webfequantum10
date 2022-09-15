@@ -1696,7 +1696,7 @@ export class ManualAddQuotationClass extends Component {
                   ) : null}
                 </div>
               )}
-              {disableEdit == true ? (
+              {/*disableEdit == true ? (
                 <div className="col-md-2 col-12 mt-3">
                   <NormalButton
                     buttonClass={"mx-2"}
@@ -1714,7 +1714,7 @@ export class ManualAddQuotationClass extends Component {
                     }
                   />
                 </div>
-              ) : null}
+                  ) : null*/}
               {disableEdit == true ? (
                 <div className="col-md-2 col-12 mt-3">
                   <NormalButton
