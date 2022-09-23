@@ -177,6 +177,12 @@ export class PrintInvoiceModuleClass extends Component {
                         : {this.state.responseData[0]?.manualinvoice.validity}
                       </div>
                     </div>
+                    <div className="row">
+                      <div className="col-3  f-600">Quotation No</div>
+                      <div className="col-9">
+                        : {this.state.responseData[0]?.manualinvoice.quotation_number}
+                      </div>
+                    </div>
                   </div>
                   <div className="col-6">
                     <div className="row">

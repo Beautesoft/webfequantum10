@@ -17,7 +17,7 @@ import Invoice from "component/Admin/Report/Account/Invoice";
 import { withTranslation } from "react-i18next";
 
 // import logo from 'assets/images/logo.png'
-
+import moment from "moment";
 export class PrintQuotationModuleClass extends Component {
   state = {
     responseData: [],
@@ -168,22 +168,15 @@ export class PrintQuotationModuleClass extends Component {
                 <div className="row ">
                   <div className="col-6">
                     <div className="row">
-                      <div className="col-3 f-600">Invoice No.</div>
+                      <div className="col-3 f-600">Quotation No.</div>
                       <div className="col-9">
                         : {this.state.responseData[0]?.quotation.quotation_number}
                       </div>
                     </div>
                     <div className="row">
-                      <div className="col-3  f-600">Invoice Date</div>
+                      <div className="col-3  f-600">Quotation Date</div>
                       <div className="col-9">
-                        : {this.state.responseData[0]?.quotation.created_at}
-                      </div>
-                    </div>
-
-                    <div className="row">
-                      <div className="col-3  f-600">Status</div>
-                      <div className="col-9">
-                        : {this.state.responseData[0]?.quotation.status}
+                        : {moment(this.state.responseData[0]?.quotation.created_at).format("DD-MM-YYYY")}
                       </div>
                     </div>
 
@@ -202,17 +195,18 @@ export class PrintQuotationModuleClass extends Component {
                   </div>
                   <div className="col-6">
                     <div className="row">
-                      <div className="col-3  f-600">Terms</div>
-                      <div className="col-9">
-                        : {this.state.responseData[0]?.quotation.terms}
-                      </div>
-                    </div>
-                    <div className="row">
                       <div className="col-3  f-600">Company Name</div>
                       <div className="col-9">
                         : {this.state.responseData[0]?.quotation.company}
                       </div>
                     </div>
+                    <div className="row">
+                      <div className="col-3  f-600">Company Address</div>
+                      <div className="col-9">
+                        : {this.state.responseData[0]?.company_header.address}
+                      </div>
+                    </div>
+
                     <div className="row">
                       <div className="col-3  f-600">Attn To</div>
                       <div className="col-9">
@@ -225,28 +219,23 @@ export class PrintQuotationModuleClass extends Component {
                         : {this.state.responseData[0]?.quotation.in_charge}
                       </div>
                     </div>
-                    <div className="row">
-                      <div className="col-3  f-600">Printed On</div>
-                      <div className="col-9">
-                        {new Date().toISOString().slice(0, 10)}
-                      </div>
-                    </div>
                   </div>
                 </div>
               </div>
               <div className="bill-detail mt-4 py-1">
                 <div className="row m-0 table-header  f-600">
                   <div className="col-2">Code</div>
-                  <div className="col-4 text-left">Description</div>
+                  <div className="col-3 text-left">Description</div>
                   <div className="col-2 text-right">Quantity</div>
-                  <div className="col-2 text-right">Unit Price</div>
+                  <div className="col-1 text-right">Unit Price</div>
+                  <div className="col-2 text-right">Disc Amount</div>
                   <div className="col-2 text-right">Amount.</div>
                 </div>
                 {this.state.responseData[0]?.quotationitem.map((item, index) => {
                   return (
                     <div className="row m-0 mt-2" key={index}>
                       <div className="col-2">{item.quotation_itemcode}</div>
-                      <div className="col-4 text-left">
+                      <div className="col-3 text-left">
                         <p>{item.quotation_itemdesc}
                           <br />
                           <br />
@@ -256,8 +245,11 @@ export class PrintQuotationModuleClass extends Component {
                       <div className="col-2 text-right">
                         {item.quotation_quantity}
                       </div>
-                      <div className="col-2 text-right">
+                      <div className="col-1 text-right">
                         {item.quotation_unitprice}
+                      </div>
+                      <div className="col-2 text-right">
+                        {item.discount_amt}
                       </div>
                       <div className="col-2 text-right">
                         {item.quotation_unitprice * item.quotation_quantity}
@@ -313,7 +305,7 @@ export class PrintQuotationModuleClass extends Component {
               </div>
               <div className="invoice-footer mt-5">
                 <div className="row m-0">
-                <div className="col-9 fs-12">
+                  <div className="col-9 fs-12">
                     <p className="">
                       Remark:{" "}
                       {this.state.responseData[0]?.quotation.remarks}
@@ -340,10 +332,9 @@ export class PrintQuotationModuleClass extends Component {
                   </div>
                   <div className="col-12 fs-12">
                     Terms And Condition
-                    <p className="">
+                    <pre className="fs-14">
                       {selectTemplate}
-                    </p>
-
+                    </pre>
 
                   </div>
 
@@ -374,7 +365,7 @@ export class PrintQuotationModuleClass extends Component {
                         accountHeader={
                           this.state.responseData[0]["company_header"]
                         }
-                        signPhoto={this.state.signPhoto}
+                        signPhoto={this.state.signPhoto ? this.state.signPhoto : ""}
                         Flag={10}
                         landscape={false}
                       />

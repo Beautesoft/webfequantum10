@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
   },
   description: {
     paddingLeft: "3px",
-    width: "49%",
+    width: "39%",
     borderRightColor: borderColor,
     borderRightWidth: 1,
   },
@@ -63,6 +63,7 @@ export class ManualTable extends React.Component {
         </Text>
         <Text style={styles.type}>{item.quotation_quantity}</Text>
         {(Flag == 7 || Flag == 10) && <Text style={styles.type}>{item.quotation_unitprice}</Text>}
+        {(Flag == 10) && <Text style={styles.type}>{item.discount_amt}</Text>}
         {(Flag == 7 || Flag == 10) && <Text style={styles.type}>
           {Number(item.quotation_quantity) * Number(item.quotation_unitprice)}
         </Text>}

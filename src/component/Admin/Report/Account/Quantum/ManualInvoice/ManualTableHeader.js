@@ -15,7 +15,7 @@ const styles = StyleSheet.create({
     fontSize: "10px",
   },
   description: {
-    width: "49%",
+    width: "39%",
     borderRightColor: borderColor,
     borderRightWidth: 1,
     textAlign: "left",
@@ -57,6 +57,7 @@ export class ManualTableHeader extends React.Component {
         <Text style={styles.description}>{`Description`}</Text>
         <Text style={styles.type}>{`Quantity`}</Text>
         {(Flag == 7 || Flag == 10) && <Text style={styles.type}>{`Unit Price`}</Text>}
+        {Flag == 10 && <Text style={styles.type}>{`Disc Amount`}</Text>}
         {(Flag == 7 || Flag == 10) && <Text style={styles.type}>{`Amount`}</Text>}
       </View>
     );

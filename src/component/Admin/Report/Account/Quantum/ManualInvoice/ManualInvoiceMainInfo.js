@@ -78,7 +78,7 @@ export class ManualInvoiceMainInfo extends React.Component {
       xNumber = accountHeader.do_number;
     }
     else if (Flag == 10) {
-      xFormName = "Invoice";
+      xFormName = "Quotation";
       xNumber = accountHeader.quotation_number;
     }
     return (
@@ -98,16 +98,25 @@ export class ManualInvoiceMainInfo extends React.Component {
               {moment(accountHeader.created_at).format("DD-MM-YYYY")}
             </Text>
           </View>
-          <View style={styles.invoiceNoContainer}>
-            <Text style={styles.leftlabel}>Status</Text>
-            <Text style={styles.label}> : </Text>
-            <Text style={styles.leftvalue}>{accountHeader.status}</Text>
-          </View>
+          {Flag != 10 &&
+            <View style={styles.invoiceNoContainer}>
+              <Text style={styles.leftlabel}>Status</Text>
+              <Text style={styles.label}> : </Text>
+              <Text style={styles.leftvalue}>{accountHeader.status}</Text>
+            </View>
+          }
           <View style={styles.invoiceNoContainer}>
             <Text style={styles.leftlabel}>Project</Text>
             <Text style={styles.label}> : </Text>
             <Text style={styles.leftvalue}>{accountHeader.title}</Text>
           </View>
+          {Flag == 7 &&
+            <View style={styles.invoiceNoContainer}>
+              <Text style={styles.leftlabel}>Quotation No</Text>
+              <Text style={styles.label}> : </Text>
+              <Text style={styles.leftvalue}>{accountHeader.quotation_number}</Text>
+            </View>
+          }
         </View>
         <View style={styles.headerText}>
           <View style={styles.invoiceNoContainer}>
@@ -115,6 +124,12 @@ export class ManualInvoiceMainInfo extends React.Component {
             <Text style={styles.label}> : </Text>
             <Text style={styles.rightvalue}>{accountHeader.company}</Text>
           </View>
+          {Flag == 10 &&
+            <View style={styles.invoiceNoContainer}>
+              <Text style={styles.rightlabel}>Company Address</Text>
+              <Text style={styles.label}> : </Text>
+              <Text style={styles.rightvalue}>{accountHeader.address}</Text>
+            </View>}
           <View style={styles.invoiceNoContainer}>
             <Text style={styles.rightlabel}>Attn To</Text>
             <Text style={styles.label}> : </Text>
@@ -127,14 +142,16 @@ export class ManualInvoiceMainInfo extends React.Component {
             <Text style={styles.label}> : </Text>
             <Text style={styles.rightvalue}>{accountHeader.in_charge}</Text>
           </View>
-          <View style={styles.invoiceNoContainer}>
-            <Text style={styles.rightlabel}>Printed On</Text>
-            <Text style={styles.label}> : </Text>
-            <Text style={styles.rightvalue}>
-              {PrintedDate}
-              {` `} {PrintedTime}
-            </Text>
-          </View>
+          {Flag != 10 &&
+            <View style={styles.invoiceNoContainer}>
+              <Text style={styles.rightlabel}>Printed On</Text>
+              <Text style={styles.label}> : </Text>
+              <Text style={styles.rightvalue}>
+                {PrintedDate}
+                {` `} {PrintedTime}
+              </Text>
+            </View>
+          }
         </View>
       </View>
     );

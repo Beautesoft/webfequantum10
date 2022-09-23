@@ -17,11 +17,13 @@ import {
   commonCreateApi,
   commonUpdateApi,
   commonDeleteApi,
-  
+
 } from "redux/actions/common";
 
-import {addManualPaymentSchedule, 
-  removeManualPaymentSchedule} from "redux/actions/quotation";
+import {
+  addManualPaymentSchedule,
+  removeManualPaymentSchedule
+} from "redux/actions/quotation";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { FormGroup, Label, Input } from "reactstrap";
@@ -54,14 +56,15 @@ export class ManualAddQuotationClass extends Component {
       currency_id: "",
       preparedBy: "",
       remarks: "",
-      contactPerson:[],
-      paymentTerms:'',
-      paymentSchedule:''
-      
+      contactPerson: [],
+      paymentTerms: '',
+      paymentSchedule: '',
+      quotation_number: "",
     },
-    currencyOption:[],
+    currencyOption: [],
     fkProject: "",
     statusOption: [],
+    quotationBasedCustomers: [],
     countryOption: [],
     stateOption: [],
     cityOption: [],
@@ -69,7 +72,7 @@ export class ManualAddQuotationClass extends Component {
     disableEdit: false,
     is_loading: true,
     isMounted: true,
-    cust_id:0,
+    cust_id: 0,
     siteGstList: [],
 
     formFieldsBillingStored: [],
@@ -90,8 +93,8 @@ export class ManualAddQuotationClass extends Component {
     visible: false,
     visibleCustomer: false,
     projectOption: [],
-    customerOption:[],
-    paymentScheduleAndTerms:[]
+    customerOption: [],
+    paymentScheduleAndTerms: []
   };
 
   componentWillMount = () => {
@@ -101,6 +104,7 @@ export class ManualAddQuotationClass extends Component {
     this.getCity();
     this.getCurrency();
     this.getPaymentScheduleAndTerms();
+    //this.getQuotationBasedCustomers();
     this.validator = new SimpleReactValidator({
       validators: {},
       element: (message) => (
@@ -140,7 +144,7 @@ export class ManualAddQuotationClass extends Component {
     if (this.state.isMounted) this.setState(data);
   };
 
-  
+
   handleOutsideClick = e => {
     if (this.node != null) {
       if (this.node.contains(e.target)) {
@@ -158,7 +162,7 @@ export class ManualAddQuotationClass extends Component {
       .then(key => {
         let { status, data } = key;
         if (status === 200) {
-          
+
           this.setState({ projectOption: data });
         }
       });
@@ -168,8 +172,8 @@ export class ManualAddQuotationClass extends Component {
     let { formFields, visible } = this.state;
     formFields["projectTitle"] = event.target.value;
     visible = true;
-     this.setState({ formFields, visible });
-     this.search();
+    this.setState({ formFields, visible });
+    this.search();
   };
   handleSearchClick = key => {
     if (!this.state.visible) {
@@ -187,50 +191,51 @@ export class ManualAddQuotationClass extends Component {
   };
 
   handleSelectProject = async data => {
-    let { formFields } = this.state;    
+    let { formFields } = this.state;
     formFields["projectTitle"] = data.title;
-    formFields["companyName"]=data.customer_name;
-    this.setState({cust_id:data.cust_id})
+    formFields["companyName"] = data.customer_name;
+    this.setState({ cust_id: data.cust_id })
+    this.getQuotationBasedCustomers(data.cust_id);
     this.props
-    .getCommonApi(
-      `custappt/?search=${data.customer_name}`
-    )
-    .then(key => {
-      let { status, data } = key;
-      if (status === 200) {
-        if(data.length> 0){
-        if(!data[0].cust_corporate){
-          let { formFields } = this.state;
-          formFields["attnTo"] = data[0].cust_name;
-          formFields["contactPerson"]=[];
-          }else{
-            formFields["contactPerson"]=data[0].contactperson
+      .getCommonApi(
+        `custappt/?search=${data.customer_name}`
+      )
+      .then(key => {
+        let { status, data } = key;
+        if (status === 200) {
+          if (data.length > 0) {
+            if (!data[0].cust_corporate) {
+              let { formFields } = this.state;
+              formFields["attnTo"] = data[0].cust_name;
+              formFields["contactPerson"] = [];
+            } else {
+              formFields["contactPerson"] = data[0].contactperson
+            }
+
+          } else {
+            formFields["attnTo"] = formFields["companyName"];
+            formFields["contactPerson"] = [];
           }
-          
-        }else{
-          formFields["attnTo"]=formFields["companyName"];
-          formFields["contactPerson"]=[];
+          ;
+        } else if (status === 204) {
+          formFields["attnTo"] = formFields["companyName"];
+          formFields["contactPerson"] = [];
         }
-       ;
-      }else if(status === 204){
-        formFields["attnTo"]=formFields["companyName"];
-        formFields["contactPerson"]=[];
-      }
-      this.setState({ formFields, projectOption: [] })
-    });
+        this.setState({ formFields, projectOption: [] })
+      });
     this.setState({ formFields, projectOption: [] });
     this.handleSearchClick();
-    
+
   };
 
   handleSelectCustomer = async data => {
-    let { formFields } = this.state;    
+    let { formFields } = this.state;
     formFields["companyName"] = data.cust_name;
-    this.setState({cust_id:data.id});  
-    if(!data.cust_corporate){
-    formFields["attnTo"] = data.cust_name;
-    }else{
-      formFields["contactPerson"]=data.contactperson
+    this.setState({ cust_id: data.id });
+    if (!data.cust_corporate) {
+      formFields["attnTo"] = data.cust_name;
+    } else {
+      formFields["contactPerson"] = data.contactperson
     }
     this.setState({ formFields, customerOption: [] });
     this.handleCustomerSearchClick();
@@ -254,8 +259,8 @@ export class ManualAddQuotationClass extends Component {
     let { formFields, visibleCustomer } = this.state;
     formFields["companyName"] = event.target.value;
     visibleCustomer = true;
-     this.setState({ formFields, visibleCustomer });
-     this.searchCustomer();
+    this.setState({ formFields, visibleCustomer });
+    this.searchCustomer();
   };
   searchCustomer = () => {
     let { formFields } = this.state;
@@ -265,8 +270,8 @@ export class ManualAddQuotationClass extends Component {
       )
       .then(key => {
         let { status, data } = key;
-        if (status === 200) { 
-          this.setState({customerOption:data });
+        if (status === 200) {
+          this.setState({ customerOption: data });
         }
       });
   };
@@ -373,8 +378,28 @@ export class ManualAddQuotationClass extends Component {
       }
     });
   };
+  getQuotationBasedCustomers = (cust_id) => {
+    let { quotationBasedCustomers } = this.state;
+    if (cust_id > 0) {
+      quotationBasedCustomers = [];
+      this.props
+        .getCommonApi(
+          `quotationcustomer/?cust_id=${cust_id}`
+        ).then((res) => {
+          for (let key of res.data) {
+            quotationBasedCustomers.push({
+              value: key.quotation_number,
+              label: key.quotation_number,
+              code: key.quotation_number,
+              active: key.quotation_number,
+            });
+          }
+          this.setState({ quotationBasedCustomers });
+        });
+    }
+  };
 
-  getCurrency= () => {
+  getCurrency = () => {
     let { currencyOption } = this.state;
     currencyOption = [];
     this.props.getCommonApi(`currencytable`).then((res) => {
@@ -383,22 +408,22 @@ export class ManualAddQuotationClass extends Component {
           value: key.id,
           label: key.curr_code,
           code: key.curr_code,
-          rate:key.curr_rate,
+          rate: key.curr_rate,
           active: key.curr_isactive,
         });
       }
       this.setState({ currencyOption });
     });
   };
-  getPaymentScheduleAndTerms =() => {
-    if(this.props.match.params.id){
-    let { paymentScheduleAndTerms } = this.state;
-    paymentScheduleAndTerms = [];
-    this.props.getCommonApi(`manualpayment/?searchqdetailid=${this.props.match.params.id}`).then((res) => {
-      paymentScheduleAndTerms= res.data.map(x=>({id:x.id,paymentSchedule:x.payment_schedule,paymentTerms:x.payment_term}))
-      this.setState({ paymentScheduleAndTerms });
-    });
-  }
+  getPaymentScheduleAndTerms = () => {
+    if (this.props.match.params.id) {
+      let { paymentScheduleAndTerms } = this.state;
+      paymentScheduleAndTerms = [];
+      this.props.getCommonApi(`manualpayment/?searchqdetailid=${this.props.match.params.id}`).then((res) => {
+        paymentScheduleAndTerms = res.data.map(x => ({ id: x.id, paymentSchedule: x.payment_schedule, paymentTerms: x.payment_term }))
+        this.setState({ paymentScheduleAndTerms });
+      });
+    }
   };
   getCountry = () => {
     let { countryOption } = this.state;
@@ -509,7 +534,7 @@ export class ManualAddQuotationClass extends Component {
       )
       .then((res) => {
         console.log("res in getAutofillItemDetails", res);
-        
+
         if (res.status == 200) {
           if (res.data[0].q_shipcost) {
             this.state.formFieldsDetailsStored.q_shipcost =
@@ -528,12 +553,12 @@ export class ManualAddQuotationClass extends Component {
           } else {
             this.state.formFieldsDetailsStored.q_taxes = 0;
           }
-          
-          if(res.data[0].q_discpercent){
-            this.state.formFieldsDetailsStored.q_discpercent=res.data[0].q_discpercent;
+
+          if (res.data[0].q_discpercent) {
+            this.state.formFieldsDetailsStored.q_discpercent = res.data[0].q_discpercent;
           }
-          else{
-            this.state.formFieldsDetailsStored.q_discpercent=0;
+          else {
+            this.state.formFieldsDetailsStored.q_discpercent = 0;
           }
           if (res.data[0].q_total) {
             this.state.formFieldsDetailsStored.q_total = res.data[0].q_total;
@@ -564,8 +589,8 @@ export class ManualAddQuotationClass extends Component {
               item_remarks: item.quotation_itemremarks,
               item_price: item.quotation_unitprice,
               item_quantity: item.quotation_quantity,
-              discount_amt:item.discount_amt,
-              discount_percent:item.discount_percent,              
+              discount_amt: item.discount_amt,
+              discount_percent: item.discount_percent,
               editing: false,
             });
             this.state.itemListBeforeEdit.push({
@@ -725,7 +750,8 @@ export class ManualAddQuotationClass extends Component {
         this.state.formFields["quoDate"] = res.data.dataList[0].created_at;
         this.state.formFields["validity"] = res.data.dataList[0].validity;
         this.state.formFields["attnTo"] = res.data.dataList[0].contact_person;
-        this.setState({cust_id:res.data.dataList[0].cust_id});
+        this.setState({ cust_id: res.data.dataList[0].cust_id });
+        this.getQuotationBasedCustomers(res.data.dataList[0].cust_id);
         console.log("statusOption in prefill", this.state.statusOption);
         console.log("res.data.dataList[0].status", res.data.dataList[0].status);
         console.log();
@@ -754,6 +780,7 @@ export class ManualAddQuotationClass extends Component {
           }
         }
         this.state.formFields["currency_id"] = res.data.dataList[0].currency_id;
+        this.state.formFields["quotation_number"] = res.data.dataList[0].quotation_number;
         this.state.formFields["preparedBy"] = res.data.dataList[0].in_charge;
         this.state.formFields["remarks"] = res.data.dataList[0].remarks;
         this.updateState(this.state.formFields);
@@ -823,7 +850,7 @@ export class ManualAddQuotationClass extends Component {
       if (!found) {
         this.props
           .commonDeleteApi(`manualinvoiceitem/${item.item_id}/`)
-          .then((res) => {});
+          .then((res) => { });
       }
     }
 
@@ -918,9 +945,9 @@ export class ManualAddQuotationClass extends Component {
       "bill_city",
       this.state.formFieldsBillingStored.city
         ? cityOption.find(
-            (option) =>
-              option.value === parseInt(this.state.formFieldsBillingStored.city)
-          ).label
+          (option) =>
+            option.value === parseInt(this.state.formFieldsBillingStored.city)
+        ).label
         : ""
     );
 
@@ -928,10 +955,10 @@ export class ManualAddQuotationClass extends Component {
       "bill_state",
       this.state.formFieldsBillingStored.state
         ? stateOption.find(
-            (option) =>
-              option.value ===
-              parseInt(this.state.formFieldsBillingStored.state)
-          ).label
+          (option) =>
+            option.value ===
+            parseInt(this.state.formFieldsBillingStored.state)
+        ).label
         : ""
     );
 
@@ -939,10 +966,10 @@ export class ManualAddQuotationClass extends Component {
       "bill_country",
       this.state.formFieldsBillingStored.country
         ? countryOption.find(
-            (option) =>
-              option.value ===
-              parseInt(this.state.formFieldsBillingStored.country)
-          ).label
+          (option) =>
+            option.value ===
+            parseInt(this.state.formFieldsBillingStored.country)
+        ).label
         : ""
     );
     // console.log("countryOption.find(option => option.value === parseInt(this.state.formFieldsBillingStored.country)).label",countryOption.find(option => option.value === parseInt(this.state.formFieldsBillingStored.country)).label)
@@ -982,10 +1009,10 @@ export class ManualAddQuotationClass extends Component {
       "ship_city",
       this.state.formFieldsShippingStored.city
         ? cityOption.find(
-            (option) =>
-              option.value ===
-              parseInt(this.state.formFieldsShippingStored.city)
-          ).label
+          (option) =>
+            option.value ===
+            parseInt(this.state.formFieldsShippingStored.city)
+        ).label
         : ""
     );
 
@@ -993,10 +1020,10 @@ export class ManualAddQuotationClass extends Component {
       "ship_state",
       this.state.formFieldsShippingStored.state
         ? stateOption.find(
-            (option) =>
-              option.value ===
-              parseInt(this.state.formFieldsShippingStored.state)
-          ).label
+          (option) =>
+            option.value ===
+            parseInt(this.state.formFieldsShippingStored.state)
+        ).label
         : ""
     );
 
@@ -1004,10 +1031,10 @@ export class ManualAddQuotationClass extends Component {
       "ship_country",
       this.state.formFieldsShippingStored.country
         ? countryOption.find(
-            (option) =>
-              option.value ===
-              parseInt(this.state.formFieldsShippingStored.country)
-          ).label
+          (option) =>
+            option.value ===
+            parseInt(this.state.formFieldsShippingStored.country)
+        ).label
         : ""
     );
 
@@ -1061,7 +1088,7 @@ export class ManualAddQuotationClass extends Component {
         formData.append("validity", formFields.validity);
         formData.append("contact_person", formFields.attnTo);
         formData.append("cust_id", this.state.cust_id);
-        
+
         //check save or post
         if (status) {
           formData.append("status", "Posted");
@@ -1069,6 +1096,7 @@ export class ManualAddQuotationClass extends Component {
           formData.append("status", statusValue);
         }
         formData.append("currency_id", formFields.currency_id);
+        formData.append("quotation_number", formFields.quotation_number);
         formData.append("in_charge", formFields.preparedBy);
         formData.append("remarks", formFields.remarks);
         formData.append("username", this.props.tokenDetail.username);
@@ -1118,9 +1146,9 @@ export class ManualAddQuotationClass extends Component {
           var resQuo = await this.props.createManualinvoice(formData);
           console.log("resQuo in createQuotation", resQuo);
           console.log("resQuo.data.id", resQuo.data.id);
-          for(let value of this.state.paymentScheduleAndTerms){
-            this.addPaymentSchedule(resQuo.data.id,value)
-          }                   
+          for (let value of this.state.paymentScheduleAndTerms) {
+            this.addPaymentSchedule(resQuo.data.id, value)
+          }
           await this.handleAddressSubmit(resQuo);
           await this.handleItemDetailsSubmit(resQuo);
 
@@ -1137,22 +1165,22 @@ export class ManualAddQuotationClass extends Component {
     }
   };
 
-  addPaymentScheduleToList=(value)=>{
+  addPaymentScheduleToList = (value) => {
     let { paymentScheduleAndTerms, formFields } = this.state;
-                          paymentScheduleAndTerms.push(value);
-                          this.setState({ paymentScheduleAndTerms });
-                          formFields.paymentSchedule = ""; formFields.paymentTerms = "";
-                          this.setState({ formFields })
+    paymentScheduleAndTerms.push(value);
+    this.setState({ paymentScheduleAndTerms });
+    formFields.paymentSchedule = ""; formFields.paymentTerms = "";
+    this.setState({ formFields })
   }
-  
-  addPaymentSchedule=async (quotationId,value)=>{
+
+  addPaymentSchedule = async (quotationId, value) => {
     const formDataPaymentSchedule = new FormData();
-            formDataPaymentSchedule.append("payment_schedule",value.paymentSchedule);          
-            formDataPaymentSchedule.append("payment_term",value.paymentTerms);
-            formDataPaymentSchedule.append("active","active");          
-            formDataPaymentSchedule.append("fk_manualinvoice",quotationId); 
-           return this.props.addManualPaymentSchedule(formDataPaymentSchedule)
-           
+    formDataPaymentSchedule.append("payment_schedule", value.paymentSchedule);
+    formDataPaymentSchedule.append("payment_term", value.paymentTerms);
+    formDataPaymentSchedule.append("active", "active");
+    formDataPaymentSchedule.append("fk_manualinvoice", quotationId);
+    return this.props.addManualPaymentSchedule(formDataPaymentSchedule)
+
   }
   handlePrintPdfFormat = (url) => {
     this.setState({
@@ -1174,7 +1202,8 @@ export class ManualAddQuotationClass extends Component {
       disableEdit,
       isPrintPdfClick,
       printData,
-      currencyOption
+      currencyOption,
+      quotationBasedCustomers,
     } = this.state;
 
     let {
@@ -1187,10 +1216,11 @@ export class ManualAddQuotationClass extends Component {
       status,
       currency_id,
       preparedBy,
-      remarks,      
+      remarks,
       contactPerson,
       paymentTerms,
-      paymentSchedule
+      paymentSchedule,
+      quotation_number
     } = formFields;
 
     let { t } = this.props;
@@ -1242,39 +1272,39 @@ export class ManualAddQuotationClass extends Component {
                     value={projectTitle}
                     name="projectTitle"
                     onChange={this.handleSearch}
-                    onClick={this.handleSearchClick}                    
+                    onClick={this.handleSearchClick}
                   />
                 </div>
-                {this.state.visible?(
-              <div className="projectSearch-block" >
-                <div className="d-flex mt-3 table table-header w-100 m-0">
-                  <div className="col-6">{t("Project")}</div>
-                  <div className="col-6">{t("Customer Name")}</div>
-                  
-                </div>
-                <div className="response-table w-100 row">
-                  {this.state.projectOption.length > 0 ? (
-                    this.state.projectOption.map((item, index) => {
-                      return (
-                        <div
-                          className="row m-0 table-body w-100 border"
-                          onClick={() => this.handleSelectProject(item)
-                          }
-                          key={index}
-                        >
-                          <div className="col-6">{item.title}</div>
-                          <div className="col-6">{item.customer_name}</div>
-                          
-                        </div>
-                      );
-                    })
-                  ) : (
-                    <div className="text-center w-100">
-                      {t("No Data Available")}
+                {this.state.visible ? (
+                  <div className="projectSearch-block" >
+                    <div className="d-flex mt-3 table table-header w-100 m-0">
+                      <div className="col-6">{t("Project")}</div>
+                      <div className="col-6">{t("Customer Name")}</div>
+
                     </div>
-                  )}
-                </div>
-                </div>):''}
+                    <div className="response-table w-100 row">
+                      {this.state.projectOption.length > 0 ? (
+                        this.state.projectOption.map((item, index) => {
+                          return (
+                            <div
+                              className="row m-0 table-body w-100 border"
+                              onClick={() => this.handleSelectProject(item)
+                              }
+                              key={index}
+                            >
+                              <div className="col-6">{item.title}</div>
+                              <div className="col-6">{item.customer_name}</div>
+
+                            </div>
+                          );
+                        })
+                      ) : (
+                        <div className="text-center w-100">
+                          {t("No Data Available")}
+                        </div>
+                      )}
+                    </div>
+                  </div>) : ''}
                 <div>
                   {this.validator.message(
                     t("Project"),
@@ -1296,43 +1326,43 @@ export class ManualAddQuotationClass extends Component {
                     onClick={this.handleCustomerSearchClick}
                   />
                 </div>
-                {this.state.visibleCustomer? (
-              <div className="customerSearch-block">
-                <div className="d-flex mt-3 table table-header w-100 m-0">
-                  <div className="col-2">{t("Name")}</div>
-                  <div className="col-2">{t("Phone")}</div>
-                  <div className="col-2">{t("Customer Code")}</div>
-                  <div className="col-2">{t("Reference")}</div>
-                  <div className="col-3">{t("Email")}</div>
-                  <div className="col-1">{t("NRIC")}</div>
-                </div>
-                <div className="response-table w-100 row">
-                  {this.state.customerOption.length > 0 ? (
-                   this.state. customerOption.map((item, index) => {
-                      return (
-                        <div
-                          className="row m-0 table-body w-100 border"
-                          onClick={() => this.handleSelectCustomer(item)
-                          }
-                          key={index}
-                        >
-                          <div className="col-2">{item.cust_name}</div>
-                          <div className="col-2">{item.cust_phone1}</div>
-                          <div className="col-2">{item.cust_code}</div>
-                          <div className="col-2">{item.cust_refer}</div>
-                          <div className="col-3">{item.cust_email}</div>
-                          <div className="col-1">{item.cust_nric}</div>
-                        </div>
-                      );
-                    })
-                  ) : (
-                    <div className="text-center w-100">
-                      {t("No Data Available")}
+                {this.state.visibleCustomer ? (
+                  <div className="customerSearch-block">
+                    <div className="d-flex mt-3 table table-header w-100 m-0">
+                      <div className="col-2">{t("Name")}</div>
+                      <div className="col-2">{t("Phone")}</div>
+                      <div className="col-2">{t("Customer Code")}</div>
+                      <div className="col-2">{t("Reference")}</div>
+                      <div className="col-3">{t("Email")}</div>
+                      <div className="col-1">{t("NRIC")}</div>
                     </div>
-                  )}
-                </div>
-              </div>
-            ) : null}
+                    <div className="response-table w-100 row">
+                      {this.state.customerOption.length > 0 ? (
+                        this.state.customerOption.map((item, index) => {
+                          return (
+                            <div
+                              className="row m-0 table-body w-100 border"
+                              onClick={() => this.handleSelectCustomer(item)
+                              }
+                              key={index}
+                            >
+                              <div className="col-2">{item.cust_name}</div>
+                              <div className="col-2">{item.cust_phone1}</div>
+                              <div className="col-2">{item.cust_code}</div>
+                              <div className="col-2">{item.cust_refer}</div>
+                              <div className="col-3">{item.cust_email}</div>
+                              <div className="col-1">{item.cust_nric}</div>
+                            </div>
+                          );
+                        })
+                      ) : (
+                        <div className="text-center w-100">
+                          {t("No Data Available")}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ) : null}
                 <div>
                   {this.validator.message(
                     t("Company Name"),
@@ -1391,22 +1421,22 @@ export class ManualAddQuotationClass extends Component {
                   {t("Attn To")}
                 </label>
                 <div className="input-group-normal">
-                {!contactPerson.length>0?
-                  <NormalInput
-                  placeholder="Enter here"
-                  disabled={disableEdit}
-                  value={attnTo}
-                  name="attnTo"
-                  onChange={this.handleChange}
-                  />:<NormalSelect
-                  options={contactPerson.map(x=>{return{id:x.name,value:x.name,label:x.name}})}
-                  disabled={disableEdit}
-                  value={attnTo}
-                  name="attnTo"
-                  onChange={(event)=>{let formFields=this.state.formFields; formFields.attnTo=event.target.value;this.setState({formFields})}}
-                />
-                
-                }
+                  {!contactPerson.length > 0 ?
+                    <NormalInput
+                      placeholder="Enter here"
+                      disabled={disableEdit}
+                      value={attnTo}
+                      name="attnTo"
+                      onChange={this.handleChange}
+                    /> : <NormalSelect
+                      options={contactPerson.map(x => { return { id: x.name, value: x.name, label: x.name } })}
+                      disabled={disableEdit}
+                      value={attnTo}
+                      name="attnTo"
+                      onChange={(event) => { let formFields = this.state.formFields; formFields.attnTo = event.target.value; this.setState({ formFields }) }}
+                    />
+
+                  }
                 </div>
                 <div>
                   {this.validator.message(t("Attn To"), attnTo, t("required"))}
@@ -1433,7 +1463,7 @@ export class ManualAddQuotationClass extends Component {
                   {t("Currency")}
                 </label>
                 <div className="input-group-normal">
-                <NormalSelect
+                  <NormalSelect
                     disabled={disableEdit}
                     options={currencyOption}
                     value={currency_id}
@@ -1482,6 +1512,19 @@ export class ManualAddQuotationClass extends Component {
                   />
                 </div>
               </div>
+              <div className="col-md-6 col-12">
+                <label className="text-left text-black common-label-text fs-17 pt-3">
+                  {t("Quotation Ref")}
+                </label>
+                <div className="input-group-normal">
+                  <NormalSelect
+                    options={quotationBasedCustomers}
+                    value={quotation_number}
+                    name="quotation_number"
+                    onChange={this.handleChange}
+                  />
+                </div>
+              </div>
 
             </div>
 
@@ -1514,64 +1557,63 @@ export class ManualAddQuotationClass extends Component {
                   />
                 </div>
               </div>
-              <div className="col-md-2 col-12"> 
-              <label className="text-left text-black common-label-text fs-17 pt-3">
-                 &nbsp;
-                </label>              
+              <div className="col-md-2 col-12">
+                <label className="text-left text-black common-label-text fs-17 pt-3">
+                  &nbsp;
+                </label>
                 <div className="input-group">
-                <NormalButton
-                  buttonClass={"mx-2"}
-                  mainbg={true}
-                  className="confirm"
-                  label="Add"
-                  onClick={() => 
-                  {
-                    if (paymentSchedule.trim().length > 0 && paymentTerms.trim().length > 0) {
-                      
-                      let value = { paymentSchedule: paymentSchedule, paymentTerms: paymentTerms, id: 0 };
-                      if (this.props.match.params.id) {
-                        this.addPaymentSchedule(this.props.match.params.id, value).then(res => {
-                          value.id = res.data.id;
+                  <NormalButton
+                    buttonClass={"mx-2"}
+                    mainbg={true}
+                    className="confirm"
+                    label="Add"
+                    onClick={() => {
+                      if (paymentSchedule.trim().length > 0 && paymentTerms.trim().length > 0) {
+
+                        let value = { paymentSchedule: paymentSchedule, paymentTerms: paymentTerms, id: 0 };
+                        if (this.props.match.params.id) {
+                          this.addPaymentSchedule(this.props.match.params.id, value).then(res => {
+                            value.id = res.data.id;
+                            this.addPaymentScheduleToList(value);
+                          })
+
+                        } else {
                           this.addPaymentScheduleToList(value);
-                        })
+                        }
 
-                      } else {
-                        this.addPaymentScheduleToList(value);
+
                       }
-
-
                     }
-                  }
                     }
                   />
-                  
+
                 </div>
               </div>
             </div>
             <div className="row">
-              <div className="col-md-10 col-12" style={{"marginLeft": "-1rem"}}>
-            {this.state.paymentScheduleAndTerms.length>0 ? <table className="table">
-                          <thead>
-                            <tr>
-                              <th className="first-value"></th>
-                              <th>Payment Schedule</th>
-                              <th>Payment Terms</th>                              
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {this.state.paymentScheduleAndTerms.map((e, index) => {
-                              return(
-                              <tr key={index}>
-                                <td> <img onClick={()=>{let {paymentScheduleAndTerms}= this.state;paymentScheduleAndTerms.splice(index,1);this.setState({paymentScheduleAndTerms}); if(this.props.match.params.id)this.props.removeManualPaymentSchedule(`${e.id}/`)}} className="close" src={closeIcon} alt="" /> </td>
-                                <td>{e.paymentSchedule}</td>
-                                <td>{e.paymentTerms}</td>
-                              </tr>)
-                            })}
+              <div className="col-md-10 col-12" style={{ "marginLeft": "-1rem" }}>
+                {this.state.paymentScheduleAndTerms.length > 0 ? <table className="table">
+                  <thead>
+                    <tr>
+                      <th className="first-value"></th>
+                      <th>Payment Schedule</th>
+                      <th>Payment Terms</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {this.state.paymentScheduleAndTerms.map((e, index) => {
+                      return (
+                        <tr key={index}>
+                          <td> <img onClick={() => { let { paymentScheduleAndTerms } = this.state; paymentScheduleAndTerms.splice(index, 1); this.setState({ paymentScheduleAndTerms }); if (this.props.match.params.id) this.props.removeManualPaymentSchedule(`${e.id}/`) }} className="close" src={closeIcon} alt="" /> </td>
+                          <td>{e.paymentSchedule}</td>
+                          <td>{e.paymentTerms}</td>
+                        </tr>)
+                    })}
 
-                          </tbody>
-                        </table>:""
-                      }
-                      </div>
+                  </tbody>
+                </table> : ""
+                }
+              </div>
             </div>
             <div className="col-md-12 quotation-content">
               <div className="tab-menus">
@@ -1580,9 +1622,8 @@ export class ManualAddQuotationClass extends Component {
                     <li key={index}>
                       <NavLink to={to} className="nav-link">
                         <div
-                          className={`sidebar-menu ${
-                            currentValue === index ? "active" : ""
-                          }`}
+                          className={`sidebar-menu ${currentValue === index ? "active" : ""
+                            }`}
                           onClick={() =>
                             this.handleClick({ key: index, id: id })
                           }
@@ -1645,7 +1686,7 @@ export class ManualAddQuotationClass extends Component {
 
               <div className="col-md-2 col-12 mt-3">
                 <NormalButton
-                  disabled={this.state.storedItemListStored.length<1}
+                  disabled={this.state.storedItemListStored.length < 1}
                   buttonClass={"mx-2"}
                   mainbg={true}
                   className="confirm"
@@ -1672,10 +1713,12 @@ export class ManualAddQuotationClass extends Component {
                     className="col-12 fs-15 "
                     label="Print"
                     // outline={false}
-                    onClick={ () => {this.props.history.push({
-                      pathname: `/admin/quantum/manualinvoice/print/${this.props.match.params.id}`,
-                    
-                    })}}
+                    onClick={() => {
+                      this.props.history.push({
+                        pathname: `/admin/quantum/manualinvoice/print/${this.props.match.params.id}`,
+
+                      })
+                    }}
                   />
 
                   {isPrintPdfClick ? (

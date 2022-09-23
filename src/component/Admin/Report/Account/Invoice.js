@@ -176,10 +176,12 @@ export class Invoice extends React.Component {
           )}
           {Flag == 10 && (
             <Fragment>
-              <View style={styles.imgcont}>
-                <Image src={this.props.signPhoto} />
-                <Text >Customer Signature </Text>
-              </View>
+              {this.props.signPhoto != "" &&
+                <View style={styles.imgcont}>
+                  <Image src={this.props.signPhoto} />
+                  <Text >Customer Signature </Text>
+                </View>
+              }
             </Fragment>
           )}
           {Flag == 10 && (
