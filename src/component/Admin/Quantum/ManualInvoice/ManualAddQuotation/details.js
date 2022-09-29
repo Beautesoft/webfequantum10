@@ -664,7 +664,7 @@ export class DetailsClass extends React.Component {
           return {
             item_disc: data.item_desc,
             item_code: data.item_code,
-            remarks: data.remarks,
+            remarks: data.remarks != undefined ? data.remarks : "",
             quantity: data.dt_qty,
             unit_price: data.dt_price,
           };

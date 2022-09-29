@@ -168,54 +168,59 @@ export class PrintQuotationModuleClass extends Component {
                 <div className="row ">
                   <div className="col-6">
                     <div className="row">
-                      <div className="col-3 f-600">Quotation No.</div>
-                      <div className="col-9">
+                      <div className="col-4 f-600">Quotation No.</div>
+                      <div className="col-8">
                         : {this.state.responseData[0]?.quotation.quotation_number}
                       </div>
                     </div>
                     <div className="row">
-                      <div className="col-3  f-600">Quotation Date</div>
-                      <div className="col-9">
+                      <div className="col-4  f-600">Quotation Date</div>
+                      <div className="col-8">
                         : {moment(this.state.responseData[0]?.quotation.created_at).format("DD-MM-YYYY")}
                       </div>
                     </div>
 
                     <div className="row">
-                      <div className="col-3  f-600">Project</div>
-                      <div className="col-9">
+                      <div className="col-4  f-600">Project</div>
+                      <div className="col-8">
                         : {this.state.responseData[0]?.quotation.title}
                       </div>
                     </div>
                     <div className="row">
-                      <div className="col-3  f-600">Validity</div>
-                      <div className="col-9">
+                      <div className="col-4  f-600">Validity</div>
+                      <div className="col-8">
                         : {this.state.responseData[0]?.quotation.validity}
                       </div>
                     </div>
                   </div>
                   <div className="col-6">
                     <div className="row">
-                      <div className="col-3  f-600">Company Name</div>
-                      <div className="col-9">
+                      <div className="col-6  f-600">Company Name</div>
+                      <div className="col-6">
                         : {this.state.responseData[0]?.quotation.company}
                       </div>
                     </div>
                     <div className="row">
-                      <div className="col-3  f-600">Company Address</div>
-                      <div className="col-9">
-                        : {this.state.responseData[0]?.company_header.address}
+                      <div className="col-6  f-600">Company Address</div>
+                      <div className="col-6">
+                        : {this.state.responseData[0]?.quotation?.cust_address}
                       </div>
                     </div>
-
                     <div className="row">
-                      <div className="col-3  f-600">Attn To</div>
-                      <div className="col-9">
+                      <div className="col-6  f-600">Contact Number</div>
+                      <div className="col-6">
+                        : {this.state.responseData[0]?.quotation.cust_phone2}
+                      </div>
+                    </div>
+                    <div className="row">
+                      <div className="col-6  f-600">Attn To</div>
+                      <div className="col-6">
                         : {this.state.responseData[0]?.quotation.contact_person}
                       </div>
                     </div>
                     <div className="row">
-                      <div className="col-3  f-600">Prepared By</div>
-                      <div className="col-9">
+                      <div className="col-6  f-600">Prepared By</div>
+                      <div className="col-6">
                         : {this.state.responseData[0]?.quotation.in_charge}
                       </div>
                     </div>
@@ -252,7 +257,7 @@ export class PrintQuotationModuleClass extends Component {
                         {item.discount_amt}
                       </div>
                       <div className="col-2 text-right">
-                        {item.quotation_unitprice * item.quotation_quantity}
+                        {item.quotation_quantity * (item.quotation_unitprice - item.discount_amt)}
                       </div>
                     </div>
                   );

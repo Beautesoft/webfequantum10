@@ -65,7 +65,7 @@ export class ManualTable extends React.Component {
         {(Flag == 7 || Flag == 10) && <Text style={styles.type}>{item.quotation_unitprice}</Text>}
         {(Flag == 10) && <Text style={styles.type}>{item.discount_amt}</Text>}
         {(Flag == 7 || Flag == 10) && <Text style={styles.type}>
-          {Number(item.quotation_quantity) * Number(item.quotation_unitprice)}
+          {Number(item.quotation_quantity) * Number(item.quotation_unitprice - item.discount_amt)}
         </Text>}
       </View>
     ));

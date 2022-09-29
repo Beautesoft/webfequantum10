@@ -128,8 +128,16 @@ export class ManualInvoiceMainInfo extends React.Component {
             <View style={styles.invoiceNoContainer}>
               <Text style={styles.rightlabel}>Company Address</Text>
               <Text style={styles.label}> : </Text>
-              <Text style={styles.rightvalue}>{accountHeader.address}</Text>
-            </View>}
+              <Text style={styles.rightvalue}>{accountHeader.cust_address}</Text>
+            </View>
+          }
+          {Flag == 10 &&
+            <View style={styles.invoiceNoContainer}>
+              <Text style={styles.rightlabel}>Contact Number</Text>
+              <Text style={styles.label}> : </Text>
+              <Text style={styles.rightvalue}>{accountHeader.cust_phone2}</Text>
+            </View>
+          }
           <View style={styles.invoiceNoContainer}>
             <Text style={styles.rightlabel}>Attn To</Text>
             <Text style={styles.label}> : </Text>
