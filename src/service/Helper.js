@@ -8,7 +8,9 @@ const helpers = {
   getBEUr() {
     return "http://103.253.15.184:3002/";
   },
-
+  getXEROAPIURL() {
+    return "  https://localhost:44359/";
+  },
   helper2: function (param1) {},
   helper3: function (param1, param2) {},
 };

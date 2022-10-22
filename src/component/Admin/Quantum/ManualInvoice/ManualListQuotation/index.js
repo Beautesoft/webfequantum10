@@ -19,7 +19,9 @@ import deleteBtn from "assets/images/delete1.png";
 import _ from "lodash";
 import CustomerSearch from "../../CustomerSearch";
 import { history } from "helpers";
-
+import { getTokenDetails } from "redux/actions/auth";
+import axios from "axios";
+import HelperUrl from "../../../../../../src/service/Helper";
 export class ManualListQuotationClass extends React.Component {
   state = {
     headerDetails: [
@@ -67,6 +69,7 @@ export class ManualListQuotationClass extends React.Component {
     statusArr: [],
     statusStr: "",
     visible: false,
+    invoices: [],
 
     // salesCollectionHeader: [
     //   { label: "Sales Collection" },
@@ -123,6 +126,7 @@ export class ManualListQuotationClass extends React.Component {
 
     this.getQuotations();
     this.getStatus();
+    this.getInvoices();
     // this.queryHandler({});
   }
 
@@ -367,7 +371,30 @@ export class ManualListQuotationClass extends React.Component {
     });
     this.handleClick();
   };
-
+  getInvoices = () => {
+    const headers = {
+      "Access-Control-Allow-Origin": "*",
+      "Content-Type": "application/x-www-form-urlencoded"
+    };
+    axios.get(HelperUrl.getXEROAPIURL() + "InvoiceSync", { mode: 'cors' }
+    )
+      .then(res => {
+        const invoices = res.data;
+        this.setState({ invoices });
+      })
+  };
+  postInvoices =  (xId,xContactPerson) => {
+    axios.post(HelperUrl.getXEROAPIURL() + "InvoiceSync/Create", null, {
+      params: {
+        xToken: this.props.tokenDetails.token,
+        xPassId: xId,
+        xName: xContactPerson
+      }
+    })
+      .then(response => response.status)
+      .catch(err => console.warn(err));
+      this.getQuotations();
+  }
   render() {
     let {
       headerDetails,
@@ -507,6 +534,30 @@ export class ManualListQuotationClass extends React.Component {
               outline={false}
               onClick={() => history.push("quantum/manualinvoice/add")}
             />
+            {this.state.invoices.length == 0 ?
+              <NormalButton
+                buttonClass={"pb-3"}
+                mainbg={true}
+                className="confirm"
+                label="Connect to Xero"
+                outline={false}
+                onClick={() => { window.location.href = HelperUrl.getXEROAPIURL() + "Authorization"; }}
+              /> : <NormalButton
+                buttonClass={"pb-3"}
+                mainbg={true}
+                className="confirm"
+                label="XERO Connected"
+                outline={false}
+              />
+            }
+            <NormalButton
+              buttonClass={"pb-3"}
+              mainbg={true}
+              className="confirm"
+              label="Post All to Xero"
+              outline={false}
+              onClick={() => { this.postInvoices("All"); }}
+            />
           </div>
         </div>
         {visible ? (
@@ -542,6 +593,8 @@ export class ManualListQuotationClass extends React.Component {
                       title,
                       manualinv_number,
                       created_at,
+                      contact_person,
+                      isxeroposted,
                       company,
                       total_amount,
                     } = item;
@@ -576,9 +629,22 @@ export class ManualListQuotationClass extends React.Component {
                         </td>
                         <td>
                           <div className="d-flex align-items-center justify-content-center">
-                            {status}
+                            {isxeroposted ? "POSTED" : "OPEN"}
                           </div>
                         </td>
+                        {!isxeroposted && (
+                          <td>
+                            <div className="d-flex align-items-center justify-content-center">
+                              <NormalButton
+                                mainbg={true}
+                                className="confirm"
+                                label="Post"
+                                outline={false}
+                                onClick={() => { this.postInvoices(id,contact_person); }}
+                              />
+                            </div>
+                          </td>
+                        )}
                       </tr>
                     );
                   })
@@ -592,14 +658,16 @@ export class ManualListQuotationClass extends React.Component {
   }
 }
 
-// const mapStateToProps = state => ({
-//   projectDetail: state.project.projectDetail,
-// });
+const mapStateToProps = state => ({
+  //   projectDetail: state.project.projectDetail,
+  tokenDetails: state.authStore.tokenDetails,
+});
 
 const mapDispatchToProps = dispatch => {
   return bindActionCreators(
     {
       getCommonApi,
+      getTokenDetails
       // deleteProject,
       // getProject
     },
@@ -608,5 +676,5 @@ const mapDispatchToProps = dispatch => {
 };
 
 export const ManualListQuotation = withTranslation()(
-  connect(null, mapDispatchToProps)(ManualListQuotationClass)
+  connect(mapStateToProps, mapDispatchToProps)(ManualListQuotationClass)
 );
